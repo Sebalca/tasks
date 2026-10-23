@@ -1,0 +1,62 @@
+# Checklist — PATCH NOTES
+
+## v0.2 — 2026-10-24 (tasks.frisk.pt)
+- **Conta e gravação na nuvem**: login com a conta central da plataforma (via `plataforma-core/auth.js`, sessão partilhada em `.frisk.pt`).
+  - Ao entrar, as tarefas ficam gravadas no Supabase (projeto "Sites", tabela `user_site_data`, `site_id = 'tasks'`, `chave = 'data'`). As regras de acesso (RLS) garantem que cada utilizador só vê os seus dados.
+  - Site `tasks` registado na tabela `sites` (tasks.frisk.pt).
+  - Gravação automática cerca de 1 segundo depois de cada alteração. Mudar de página ou de secção e abrir ou fechar "Concluídas" não conta como alteração.
+  - Quando se volta ao separador (e a cada 2 minutos), o site vai buscar as alterações feitas noutros dispositivos.
+  - Proteção contra conflitos: se a conta e o dispositivo tiverem alterações diferentes, o site pergunta quais manter, com opção de desfazer.
+  - Sem internet, continua a funcionar e guarda neste dispositivo. As alterações são enviadas quando a ligação voltar.
+- Botão de estado no topo (Entrar / Guardado / A guardar… / Sem ligação / Por decidir) e botão "Conta" na barra lateral: entrar, criar conta, recuperar password, sincronizar e terminar sessão.
+- Ao terminar sessão, as tarefas são removidas deste dispositivo (continuam na conta).
+- Quem abre o site pela primeira vez já não recebe a página "Finanças". Essa página entra através dos teus dados importados.
+
+## v0.1d — 2026-10-23
+- Botão **"Concluir todas"** na faixa "Em curso": conclui de uma vez todas as tarefas em curso da página. Cada uma vai para as concluídas da sua secção, com data e hora. Inclui "Desfazer".
+
+## v0.1c — 2026-10-23
+- **"Por fazer" configurável por secção**: no menu ⋮ da secção, a opção "“Por fazer”: …" permite escolher entre usar o padrão das Definições, desligar, ou um valor próprio em dias ou em nº de tarefas concluídas.
+- **Repor**: as tarefas em "Por fazer" têm um botão visível que as devolve à secção de origem e recomeça a contagem. A opção também está no menu ⋮.
+- **Ícones (emoji)** em páginas e secções: no menu ⋮, escolhe "Escolher ícone…" (60 emojis ou qualquer outro). O ícone aparece na barra lateral e nos títulos, e clicar nele permite mudá-lo.
+- **Cor da caixa**: para além do contorno, pinta também o fundo da checkbox com transparência.
+- **Formatação de texto**: negrito, itálico, sublinhado, riscado, realce e limpar formatação, todos com atalhos. Há também atalhos para converter em título, subtítulo ou tarefa.
+- **Definições** passam a ter separadores **Geral** e **Atalhos**, com a lista completa de atalhos. O botão "Atalhos" da barra lateral abre o separador Atalhos.
+- **Em curso**:
+  - Premir na caixa (ou usar Ctrl+Shift+Enter, ou o menu ⋮) marca a tarefa como "em curso": a caixa fica com o visto e o texto com uma caixa à volta.
+  - Um clique normal conclui a tarefa. Premir outra vez retira a marca.
+  - Faixa **"Em curso"** no topo da página com as tarefas marcadas de todas as secções: clicar no texto leva à tarefa e clicar na caixa conclui-a.
+  - As tarefas em curso não passam para "Por fazer".
+
+## v0.1b — 2026-10-23
+- O site regista a **data e hora de criação** de cada tarefa (não aparece no ecrã). Só conta a partir do momento em que a tarefa tem texto. Às tarefas que já existiam foi atribuída a data em que esta versão abriu pela primeira vez.
+- Nova secção **"Por fazer"**, presente em todas as páginas. Só aparece na barra lateral, a vermelho e com contador, quando tem tarefas.
+  - A tarefa sai da secção de origem e fica com a indicação de onde veio. As subtarefas vão com ela.
+  - Ao concluí-la, vai para as concluídas da secção de origem.
+  - No menu ⋮ há a opção "Devolver a …", que reinicia o tempo.
+  - Na barra lateral, o número de cada secção deixa de contar as tarefas que estão em "Por fazer".
+- **Cores** no menu ⋮: cor da caixa (checkbox) e cor do texto, com 20 cores à escolha e a opção "Sem cor".
+- Novo botão **Definições** (engrenagem no topo e na barra lateral):
+  - Tema: Automático, Claro ou Escuro.
+  - "Por fazer": ligar ou desligar, e escolher o tempo em **dias** ou em **número de tarefas concluídas na página**. Por defeito: 7 dias.
+- Correção: a barra de progresso e os botões de adicionar não ficavam escondidos quando deviam.
+
+## v0.1a — 2026-10-23
+- Nova página **"Finanças"** com as secções Melhorias/alterações, Onboarding e Depois da versão 1.0. A primeira secção tem o conteúdo da imagem: Interface/aspeto, Listagens/Finanças/Contas e Para ir para v1, com as respetivas subtarefas. A página é adicionada uma única vez, também a quem já tem dados guardados.
+- As tarefas concluídas mostram a **data e hora de conclusão** (dd/mm/aaaa hh:mm) na secção "Concluídas".
+- O número ao lado de cada secção corresponde ao total de tarefas menos as concluídas (o comportamento já era este desde a v0.1).
+
+## v0.1 — 2026-10-23
+- Ficheiro HTML único, funciona offline; dados guardados no browser (localStorage, chave `frisk-checklist-v1`).
+- Várias **páginas**, cada uma com várias **secções** (abas na barra lateral, estilo Google Docs).
+- Blocos: **título**, **subtítulo** e **tarefa** (checkbox); atalhos `# ` e `## ` para títulos.
+- **Subtarefas** em vários níveis (Tab / Shift+Tab ou menu).
+- Tarefas concluídas passam para a zona **"Concluídas"** no fundo da secção (recolhível), com indicação de onde estavam; ao desmarcar voltam ao sítio original.
+- Concluir uma tarefa conclui as subtarefas; desmarcá-la reverte as que foram concluídas em conjunto.
+- **Arrastar** pela pega ⠿ para reordenar, criar subtarefa (largar mais à direita) ou mover para outra secção/página (largar na barra lateral).
+- Menu por item: converter tipo, subir/descer, recuo, mover para outra secção, duplicar, apagar.
+- Páginas e secções: mudar nome, duplicar, reordenar, mover secção para outra página, apagar.
+- "Desfazer" após apagar/mover; barra de progresso por secção; contador de pendentes na barra lateral.
+- Colar várias linhas cria várias tarefas (reconhece `- [ ]`, `[x]`, `☐`).
+- Exportar/Importar JSON; modo escuro automático; versão mobile com menu lateral.
+- Estrutura de dados preparada para sincronizar com Supabase (`user_site_data`, `site_id = 'checklist'`).
