@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Checklist</title>
 <style>
-:root{--bg:#f0f2f5;--panel:#fff;--side:#f8fafd;--text:#1f1f1f;--muted:#5f6368;--line:#e1e4e8;--accent:#0b57d0;--accent-soft:#d3e3fd;--hover:#eef1f6;--danger:#c5221f;--shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.06);--I:28px}
+:root{--bg:#f0f2f5;--panel:#fff;--side:#f8fafd;--text:#1f1f1f;--muted:#5f6368;--line:#e1e4e8;--accent:#0b57d0;--accent-soft:#d3e3fd;--hover:#eef1f6;--danger:#c5221f;--shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.06);--I:28px;--HO:24px}
 :root[data-theme=dark]{--bg:#18191b;--panel:#202124;--side:#1d1e20;--text:#e8eaed;--muted:#9aa0a6;--line:#3c4043;--accent:#a8c7fa;--accent-soft:#2b3a55;--hover:#2a2b2e;--danger:#f28b82;--shadow:0 1px 3px rgba(0,0,0,.5);color-scheme:dark}
 @media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#18191b;--panel:#202124;--side:#1d1e20;--text:#e8eaed;--muted:#9aa0a6;--line:#3c4043;--accent:#a8c7fa;--accent-soft:#2b3a55;--hover:#2a2b2e;--danger:#f28b82;--shadow:0 1px 3px rgba(0,0,0,.5);color-scheme:dark}}
 *{box-sizing:border-box}
@@ -55,7 +55,7 @@ body.side-closed #side{margin-left:-270px}
 .progress .bar{flex:0 0 140px;height:4px;border-radius:2px;background:var(--line);overflow:hidden}
 .progress .bar i{display:block;height:100%;background:var(--accent);width:0;transition:width .3s}
 #blocks{position:relative;margin-left:-26px}
-.row{display:flex;align-items:flex-start;gap:6px;padding:2px 4px 2px calc(var(--d)*var(--I) + 2px);border-radius:6px;position:relative;transition:opacity .2s,transform .2s}
+.row{display:flex;align-items:flex-start;gap:6px;padding:4px 4px 4px calc(var(--d)*var(--I) + 2px);border-radius:6px;position:relative;transition:opacity .2s,transform .2s}
 .row:hover{background:var(--hover)}
 .row.leaving{opacity:0;transform:translateX(14px)}
 .row.flash{animation:fl 1s}
@@ -76,11 +76,11 @@ input.cb.pressing{transform:scale(1.25);transition:transform .35s}
 @media (prefers-color-scheme:dark){:root:not([data-theme=light]) .txt mark{background:#5c4f00}}
 input.cb:checked:after{content:"";width:4px;height:8px;border:solid var(--panel);border-width:0 2px 2px 0;transform:translate(0,-1px) rotate(45deg)}
 .txt{flex:1;min-width:0;outline:none;padding:0 2px;white-space:pre-wrap;word-break:break-word;min-height:22.5px}
-.row.h1{margin-top:22px}
-.row.h1 .txt{font-size:24px;line-height:1.35}
+.row.h1{margin-top:22px;margin-bottom:8px;margin-left:calc(-1 * var(--HO))}
+.row.h1 .txt{font-size:24px;line-height:1.35;font-weight:700}
 .row.h1 .grip{height:32px}
-.row.h2{margin-top:12px}
-.row.h2 .txt{font-size:18px;font-weight:600;line-height:1.4}
+.row.h2{margin-top:14px;margin-bottom:5px;margin-left:calc(-1 * var(--HO))}
+.row.h2 .txt{font-size:18px;font-weight:700;line-height:1.4}
 .row.h2 .grip{height:25px}
 .row:first-child{margin-top:0}
 .more{width:26px;height:22px;border-radius:6px;display:grid;place-items:center;color:var(--muted);opacity:0;flex:none}
@@ -234,7 +234,8 @@ dialog .close{margin-top:16px;float:right;color:var(--accent);font-weight:600;pa
  .doc{margin:0 0 80px;padding:22px 16px 48px 22px;border-radius:0;box-shadow:none;min-height:calc(100% - 52px)}
  .tab-title{font-size:24px}
  #blocks{margin-left:-20px}
- :root{--I:22px}
+ :root{--I:22px;--HO:14px}
+ .doc{padding-left:30px}
 }
 </style>
 </head>
@@ -373,7 +374,7 @@ dialog .close{margin-top:16px;float:right;color:var(--accent);font-weight:600;pa
 (()=>{
 'use strict';
 /* =========================================================
-   Checklist v0.2 — dados em localStorage.
+   Checklist v0.2a — dados em localStorage.
    Estrutura pronta para Supabase (user_site_data:
    site_id 'checklist', chave 'data', valor = objeto S).
    ========================================================= */
