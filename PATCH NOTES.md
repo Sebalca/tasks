@@ -1,5 +1,9 @@
 # Checklist — PATCH NOTES
 
+## v0.2a — 2026-10-24
+- Espaçamento entre linhas mais largo, semelhante ao 1.5 do Google Docs.
+- Títulos e subtítulos a **negrito**, alinhados mais à esquerda do que as caixas (como no Google Docs), com espaço extra por baixo.
+
 ## v0.2 — 2026-10-24 (tasks.frisk.pt)
 - **Conta e gravação na nuvem**: login com a conta central da plataforma (via `plataforma-core/auth.js`, sessão partilhada em `.frisk.pt`).
   - Ao entrar, as tarefas ficam gravadas no Supabase (projeto "Sites", tabela `user_site_data`, `site_id = 'tasks'`, `chave = 'data'`). As regras de acesso (RLS) garantem que cada utilizador só vê os seus dados.
