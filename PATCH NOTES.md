@@ -1,5 +1,20 @@
 # Checklist — PATCH NOTES
 
+## v0.3 — 2026-10-24
+- **Títulos movem o conteúdo**: arrastar um título (ou usar Alt+↑/↓, "Mover para cima/baixo" ou "Mover para outra secção") leva consigo tudo o que está por baixo, até ao próximo título do mesmo nível. Um título leva os subtítulos que tem por baixo; um subtítulo pára no título seguinte. As tarefas continuam a levar as subtarefas.
+- **Ctrl+clique na caixa** marca ou desmarca a tarefa como "em curso". Premir longo continua a funcionar, por exemplo no telemóvel.
+- **Pega ⠿**: um clique copia o texto da linha (ou das linhas selecionadas); premir abre as opções; arrastar move.
+- **Desfazer/refazer**: Ctrl+Z e Ctrl+Y (ou Ctrl+Shift+Z) para texto escrito ou apagado, tarefas apagadas, movidas, concluídas, recuos, cores, etc. A escrita contínua conta como um só passo.
+- **Seleção de várias linhas**: arrastar o rato de uma linha para outras, Shift+clique, ou Esc para selecionar a linha atual (Shift+↑/↓ para alargar). Com linhas selecionadas:
+  - Ctrl+C / Ctrl+X para copiar ou cortar.
+  - Delete para apagar.
+  - Tab / Shift+Tab para mudar o recuo.
+  - Ctrl+Enter para concluir.
+  - Ctrl+Shift+Enter para marcar como em curso.
+  - As cores escolhidas no menu ⋮ aplicam-se a todas as linhas selecionadas.
+- **Caixa "Em curso"** pode ser minimizada ou maximizada clicando no título. Começa sempre minimizada.
+- Lista de atalhos nas Definições atualizada.
+
 ## v0.2a — 2026-10-24
 - Espaçamento entre linhas mais largo, semelhante ao 1.5 do Google Docs.
 - Títulos e subtítulos a **negrito**, alinhados mais à esquerda do que as caixas (como no Google Docs), com espaço extra por baixo.
