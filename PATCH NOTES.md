@@ -1,5 +1,17 @@
 # Checklist — PATCH NOTES
 
+## v0.4 — 2026-10-27
+- **Partilha de páginas e secções** com outras contas da plataforma frisk.pt:
+  - Menu ⋮ da página ou da secção → "Partilhar…" → email da conta + "Pode editar" ou "Pode ver". Só funciona com emails que já têm conta (avisa se não existir).
+  - Na mesma janela vês quem tem acesso (Pendente / Aceite / Recusou), podes mudar a permissão ou remover o acesso.
+  - Quem é convidado vê um aviso "📩 Tens N convites de partilha" e escolhe Aceitar ou Recusar. Depois de aceitar, aparece na barra lateral em **"Partilhadas comigo"**. As secções soltas ficam agrupadas em "Secções partilhadas comigo".
+  - **Tempo real**: as alterações aparecem nos dois lados em 1–2 segundos. Se ambos mexerem ao mesmo tempo, as alterações são juntadas tarefa a tarefa.
+  - Tudo é comum, incluindo a marca "em curso". Nas partilhas "Pode ver" não é possível editar nada e aparece a faixa "só podes ver".
+  - O destinatário pode "Sair da partilha" no menu ⋮. Se o dono apagar a página ou secção, ela desaparece também para quem a tinha.
+  - 👥 na barra lateral = partilhada; 👁 = só leitura.
+  - Uma secção já partilhada à parte não pode ser incluída na partilha da página inteira (o site avisa).
+- Supabase: novas tabelas `tasks_docs` (conteúdo partilhado, com controlo de versão) e `tasks_shares` (convites e permissões), com RLS e funções `tasks_share_invite`, `tasks_my_invites`, `tasks_share_respond`, `tasks_shared_with_me`. O conteúdo partilhado deixa de estar no `user_site_data` do dono, que guarda só uma referência.
+
 ## v0.3a — 2026-10-27
 - A zona **"Concluídas"** de cada secção começa sempre minimizada (como a caixa "Em curso"). Clicar no título abre/fecha.
 

@@ -189,6 +189,31 @@ body.is-dragging,body.is-dragging *{cursor:grabbing!important;user-select:none}
 #conflict p{margin:0 0 8px;font-size:14px}
 #conflict .btn{width:100%;text-align:left;margin-top:8px}
 #conflict small{display:block;font-weight:400;color:var(--muted);font-size:12px;margin-top:2px}
+/* partilha */
+.side-sep{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;padding:14px 12px 4px}
+.shr{font-size:12px;flex:none;opacity:.8}
+.doc.ro .more,.doc.ro .adders,.doc.ro #clearDone{display:none!important}
+.doc.ro .grip{visibility:hidden!important}
+.doc.ro input.cb{pointer-events:none;opacity:.55}
+.ro-bar{font-size:13px;color:var(--muted);background:var(--hover);border-radius:8px;padding:6px 10px;margin:0 0 14px;display:flex;gap:8px;align-items:center}
+#invBar{display:flex;align-items:center;gap:10px;background:color-mix(in srgb,var(--accent) 12%,var(--panel));border:1px solid color-mix(in srgb,var(--accent) 35%,transparent);border-radius:10px;padding:8px 12px;margin:0 auto 10px;max-width:816px;font-size:14px}
+#invBar button{margin-left:auto;font-weight:600;color:var(--accent);padding:4px 10px;border-radius:8px}
+#invBar button:hover{background:var(--hover)}
+#share,#inv{width:min(460px,calc(100vw - 24px))}
+.sh-form{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 4px}
+.sh-form input{flex:1 1 200px;min-width:0;font:inherit;color:var(--text);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+.sh-form select,.sh-row select{font:inherit;font-size:13px;color:var(--text);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:6px 8px}
+#shMsg,#invMsg{font-size:13px;min-height:18px;margin:4px 0}
+#shMsg.err{color:var(--danger)}
+.sh-row{display:flex;align-items:center;gap:8px;padding:8px 0;border-top:1px solid var(--line);font-size:14px}
+.sh-row .em{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tag{font-size:11px;font-weight:700;border-radius:10px;padding:2px 8px;background:var(--hover);color:var(--muted);flex:none}
+.tag.ok{background:color-mix(in srgb,#1e8e3e 18%,transparent);color:#1e8e3e}
+.tag.no{background:color-mix(in srgb,var(--danger) 15%,transparent);color:var(--danger)}
+.sh-row .x{color:var(--muted);width:28px;height:28px;border-radius:50%;flex:none}
+.sh-row .x:hover{background:var(--hover);color:var(--danger)}
+.inv-row{border-top:1px solid var(--line);padding:10px 0;font-size:14px}
+.inv-row .acc-btns{margin-top:8px}
 /* por fazer */
 .item.tab.todo{color:var(--danger);font-weight:600}
 .item.tab.todo .ico,.item.tab.todo .count{color:var(--danger)}
@@ -272,7 +297,9 @@ dialog .close{margin-top:16px;float:right;color:var(--accent);font-weight:600;pa
     <button class="iconbtn" id="cloudBtn" data-s="off" title="Conta e sincronização"><span class="dot"></span><span class="lbl">Entrar</span></button>
     <button class="iconbtn" id="settingsBtn" title="Definições"><svg width="21" height="21" viewBox="0 0 24 24" fill="currentColor"><path d="M19.14 12.94c.04-.31.06-.63.06-.94s-.02-.63-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96a7 7 0 0 0-1.62-.94l-.36-2.54A.48.48 0 0 0 13.92 2h-3.84a.48.48 0 0 0-.48.41l-.36 2.54c-.59.24-1.13.56-1.62.94l-2.39-.96a.48.48 0 0 0-.59.22L2.72 8.47a.47.47 0 0 0 .12.61l2.03 1.58c-.05.31-.07.63-.07.94s.02.63.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.47.47 0 0 0-.12-.61zM12 15.6A3.6 3.6 0 1 1 15.6 12 3.6 3.6 0 0 1 12 15.6z"/></svg></button>
   </header>
+  <div id="invBar" hidden><span id="invTxt"></span><button id="invOpen">Ver</button></div>
   <div class="doc">
+    <div id="roBar" class="ro-bar" hidden></div>
     <div id="wip" hidden><div class="wip-top"><button id="wipToggle" class="wip-h" title="Mostrar/esconder"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg><span>Em curso</span></button><button id="wipAll" title="Concluir todas as tarefas em curso desta página">Concluir todas</button></div><div id="wipList"></div></div>
     <div class="tt-row"><button id="tabIcon" class="emo-btn" title="Mudar ícone" hidden></button><div id="tabTitle" class="tab-title" data-ph="Nome da secção"></div></div>
     <div id="progress" class="progress"><div class="bar"><i></i></div><span></span></div>
@@ -374,6 +401,24 @@ dialog .close{margin-top:16px;float:right;color:var(--accent);font-weight:600;pa
   <div id="accMsg"></div>
   <button class="close" onclick="this.closest('dialog').close()">Fechar</button>
 </dialog>
+<dialog id="share">
+  <h3 id="shTitle">Partilhar</h3>
+  <p class="hint" style="margin:0">Partilha com outras contas da plataforma frisk.pt. A pessoa recebe um convite no Tasks e, depois de aceitar, as alterações aparecem em tempo real para os dois.</p>
+  <form class="sh-form" id="shForm" onsubmit="return false">
+    <input type="email" id="shEmail" placeholder="Email da conta" autocomplete="off" required>
+    <select id="shPerm"><option value="1">Pode editar</option><option value="0">Pode ver</option></select>
+    <button class="btn pri" id="shInvite" type="submit">Convidar</button>
+  </form>
+  <div id="shMsg"></div>
+  <div id="shList"></div>
+  <button class="close" onclick="this.closest('dialog').close()">Fechar</button>
+</dialog>
+<dialog id="inv">
+  <h3>Convites de partilha</h3>
+  <div id="invList"></div>
+  <div id="invMsg"></div>
+  <button class="close" onclick="this.closest('dialog').close()">Fechar</button>
+</dialog>
 <dialog id="conflict">
   <h3>Escolher que dados manter</h3>
   <p>As tarefas guardadas na conta e as deste dispositivo são diferentes.</p>
@@ -398,7 +443,7 @@ dialog .close{margin-top:16px;float:right;color:var(--accent);font-weight:600;pa
 (()=>{
 'use strict';
 /* =========================================================
-   Checklist v0.3a — dados em localStorage.
+   Checklist v0.4 — dados em localStorage.
    Estrutura pronta para Supabase (user_site_data:
    site_id 'checklist', chave 'data', valor = objeto S).
    ========================================================= */
@@ -445,7 +490,7 @@ function fix(s){
  st.todo=st.todo||{};if(typeof st.todo.enabled!=='boolean')st.todo.enabled=true;if(!['days','count'].includes(st.todo.mode))st.todo.mode='days';st.todo.value=Math.max(1,parseInt(st.todo.value)||7);
  const now=Date.now();
  if(!Array.isArray(s.pages)||!s.pages.length)s.pages=demo().pages;
- s.pages.forEach(p=>{p.id=p.id||uid();p.title=p.title??'Página';if(!Array.isArray(p.tabs)||!p.tabs.length)p.tabs=[{id:uid(),title:'Secção 1',blocks:[]}];
+ s.pages.forEach(p=>{p.id=p.id||uid();p.title=p.title??'Página';if(!Array.isArray(p.tabs)||!p.tabs.length)p.tabs=p._doc?[{id:'ph-'+p._doc,title:'A carregar…',blocks:[],_ph:true}]:[{id:uid(),title:'Secção 1',blocks:[]}];
   p.doneLog=Array.isArray(p.doneLog)?p.doneLog:[];
   p.tabs.forEach(t=>{t.id=t.id||uid();t.title=t.title??'Secção';t.blocks=Array.isArray(t.blocks)?t.blocks:[];walk(t.blocks,b=>{b.id=b.id||uid();b.type=b.type||'task';b.text=b.text||'';b.children=Array.isArray(b.children)?b.children:[];if(!b.createdAt&&b.text.trim())b.createdAt=now})})});
  return s;
@@ -495,7 +540,7 @@ function rec(kind){
  H.r=[];H.last=now;H.kind=kind||null;H.at=t;
 }
 function histReset(){H.u=[];H.r=[];H.last=JSON.stringify(S.pages);H.kind=null}
-function saveNow(){clearTimeout(saveT);rec();if(window.__leaving)return;try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){toast('Não foi possível guardar neste browser')}cloudChanged()}
+function saveNow(){clearTimeout(saveT);rec();if(window.__leaving)return;try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){toast('Não foi possível guardar neste browser')}cloudChanged();docsChanged()}
 function save(kind){rec(kind);clearTimeout(saveT);saveT=setTimeout(saveNow,250)}
 addEventListener('beforeunload',saveNow);
 document.addEventListener('visibilitychange',()=>{if(document.hidden)saveNow()});
@@ -569,7 +614,7 @@ function todoSig(){return S.pages.map(p=>collectTodo(p).map(x=>x.b.id).join(',')
 function applyTheme(){const th=S.settings.theme;if(th==='auto')delete document.documentElement.dataset.theme;else document.documentElement.dataset.theme=th}
 
 /* ---------- render ---------- */
-let visible=[];
+let visible=[],RO=false;
 const doneOpen=new Set(); // concluídas começam sempre minimizadas
 function renderAll(){const p=curPage(),t=curTab();S.cur.page=p.id;S.cur.tab=t.id;
  if(S.cur.view==='todo'&&!collectTodo(p).length)delete S.cur.view;
@@ -593,9 +638,12 @@ function renderWip(p){
 }
 function renderSide(){
  const nav=$('#pages');nav.innerHTML='';const cp=curPage(),ct=curTab();
- S.pages.forEach(p=>{
+ const own=S.pages.filter(p=>!p._recv),rcv=S.pages.filter(p=>p._recv);
+ [...own,...(rcv.length?['SEP']:[]),...rcv].forEach(p=>{
+  if(p==='SEP'){const h=el('div','side-sep');h.textContent='Partilhadas comigo';nav.append(h);return}
   const it=el('div','item page'+(p===cp?' active':''));it.dataset.page=p.id;
-  it.innerHTML=`${icoHTML(p.icon,ICON.page)}<span class="name"></span><button class="dots" title="Opções da página">${ICON.more}</button>`;
+  const shr=p._doc?`<span class="shr" title="${p._recv?'Partilhada por '+esc(docOwner(p._doc))+(p._ro?' (só ver)':''):'Partilhada'}">${p._ro?'👁':'👥'}</span>`:'';
+  it.innerHTML=`${icoHTML(p.icon,p._virtual?'<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>':ICON.page)}<span class="name"></span>${shr}${p._virtual?'':`<button class="dots" title="Opções da página">${ICON.more}</button>`}`;
   it.querySelector('.name').textContent=p.title||'Sem título';nav.append(it);
   if(p!==cp)return;
   const box=el('div','tabs');
@@ -605,11 +653,12 @@ function renderSide(){
   p.tabs.forEach(t=>{
    const ti=el('div','item tab'+(t===ct&&S.cur.view!=='todo'?' active':''));ti.dataset.page=p.id;ti.dataset.tab=t.id;
    const open=openCount(t,p);
-   ti.innerHTML=`${icoHTML(t.icon,ICON.tab)}<span class="name"></span><span class="count">${open||''}</span><button class="dots" title="Opções da secção">${ICON.more}</button>`;
+   const tsh=t._doc?`<span class="shr" title="${t._recv?'Partilhada por '+esc(docOwner(t._doc))+(t._ro?' (só ver)':''):'Partilhada'}">${t._ro?'👁':'👥'}</span>`:'';
+   ti.innerHTML=`${icoHTML(t.icon,ICON.tab)}<span class="name"></span>${tsh}<span class="count">${open||''}</span>${t._ro&&!t._doc?'':`<button class="dots" title="Opções da secção">${ICON.more}</button>`}`;
    ti.querySelector('.name').textContent=t.title||'Sem título';box.append(ti);
   });
   const add=el('button','addtab');add.innerHTML='<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6z"/></svg>Nova secção';
-  add.onclick=()=>addTab(p);box.append(add);nav.append(box);
+  add.onclick=()=>addTab(p);if(!p._virtual&&!p._ro)box.append(add);nav.append(box);
  });
 }
 
@@ -619,7 +668,7 @@ function rowEl(b,depth,doneView){
  if(b.type==='task'){const c=el('input','cb');c.type='checkbox';c.checked=!!b.done;c.setAttribute('aria-label','Concluída');if(b.boxColor){c.style.setProperty('--cb',b.boxColor);c.classList.add('has-c')}if(b.working&&!b.done){c.classList.add('wk');r.classList.add('working');if(b.boxColor)r.style.setProperty('--cb',b.boxColor)}r.append(c)}
  const tx=el('div','txt');setTxt(tx,b);if(b.textColor)tx.style.color=b.textColor;
  if(doneView){if(!b.text)tx.textContent='(sem texto)'}
- else{tx.contentEditable='true';tx.dataset.ph=b.type==='h1'?'Título':b.type==='h2'?'Subtítulo':'Tarefa'}
+ else{tx.contentEditable=RO?'false':'true';tx.dataset.ph=b.type==='h1'?'Título':b.type==='h2'?'Subtítulo':'Tarefa'}
  r.append(tx);
  if(doneView&&b.done&&b.doneAt){const w=el('span','when');w.textContent=fmtDate(b.doneAt);w.title='Concluída em '+new Date(b.doneAt).toLocaleString('pt-PT');r.append(w)}
  const m=el('button','more');m.innerHTML=ICON.more;m.title='Opções';r.append(m);
@@ -631,7 +680,9 @@ function fmtDate(ts){const d=new Date(ts),z=n=>String(n).padStart(2,'0');return 
 function renderDoc(){
  const p=curPage(),t=curTab(),todo=S.cur.view==='todo';
  $('#blocks').hidden=todo;$('#todoList').hidden=!todo;$('#todoHint').hidden=!todo;document.querySelector('.adders').hidden=todo;
- TT.contentEditable=todo?'false':CE;
+ RO=!todo&&!!t._ro;$('.doc').classList.toggle('ro',RO);
+ TT.contentEditable=todo||RO?'false':CE;$('#pageTitle').readOnly=!!(p._ro||p._virtual);
+ const rb=$('#roBar');rb.hidden=!(t._recv||p._recv)||todo;if(!rb.hidden){const d=t._doc||p._doc;rb.textContent=`👥 Partilhada por ${docOwner(d)} · ${t._ro?'só podes ver':'podes editar'}`}
  renderIcons(p,t,todo);renderWip(p);
  if(todo){SEL.clear();renderTodo(p);return}
  if(document.activeElement!==$('#pageTitle'))$('#pageTitle').value=p.title;
@@ -692,6 +743,7 @@ function flash(id){const tx=txtOf(id);if(tx){tx.parentNode.classList.add('flash'
 
 /* ---------- operações ---------- */
 function addBlock(type){
+ if(RO)return;
  const t=curTab(),lastB=t.blocks[t.blocks.length-1];
  if(type==='task'&&lastB&&lastB.type==='task'&&!lastB.done&&!lastB.text&&!lastB.children.length){focusB(lastB.id);return}
  const n=nb(type);t.blocks.push(n);save();renderAll();focusB(n.id);
@@ -735,6 +787,7 @@ function setType(id,type){
  b.type=type;save();renderAll();
 }
 function toggle(id){
+ if(roOf(id))return;
  const path=pathTo(id);if(!path)return;const b=path[path.length-1];const st=Date.now();const pg=curPage();const log=pg.doneLog=pg.doneLog||[];
  const unlog=ts=>{const i=log.lastIndexOf(ts);if(i>=0)log.splice(i,1)};
  if(!b.done){b.done=true;b.doneAt=st;delete b.working;log.push(st);walk(b.children,c=>{if(c.type==='task'&&!c.done){c.done=true;c.doneAt=st;delete c.working;log.push(st)}})}
@@ -797,7 +850,7 @@ function colorItems(b,id){const it=[];
  if(b.type==='task')it.push({label:'Cor da caixa…',fn:r=>colorMenu(r,'Cor da caixa',b.boxColor,c=>setColor(id,'boxColor',c))});
  it.push({label:'Cor do texto…',fn:r=>colorMenu(r,'Cor do texto',b.textColor,c=>setColor(id,'textColor',c))});return it}
 function reporTask(id){const L=locate(id);if(!L)return;const t=tabOf(id);const n=Date.now();walk([L.b],x=>{if(x.createdAt)x.createdAt=n});save();renderAll();toast(`Reposta em “${t?t.title:''}”`)}
-function toggleWorking(id){const L=locate(id);if(!L||L.b.type!=='task'||L.b.done)return;if(L.b.working)delete L.b.working;else{L.b.working=true;L.b.workingAt=Date.now()}save();renderAll();toast(L.b.working?'Marcada como em curso':'Retirada de em curso')}
+function toggleWorking(id){if(roOf(id))return;const L=locate(id);if(!L||L.b.type!=='task'||L.b.done)return;if(L.b.working)delete L.b.working;else{L.b.working=true;L.b.workingAt=Date.now()}save();renderAll();toast(L.b.working?'Marcada como em curso':'Retirada de em curso')}
 const EMOJIS='📌 ✅ 📝 📋 📁 🗂️ 📊 📈 💰 💶 💳 🧾 🏠 🏗️ 🔧 🛠️ ⚙️ 💡 🎯 🚀 ⭐ 🔥 ❤️ 💼 📅 ⏰ 📞 ✉️ 💬 👥 👤 🎓 📚 ✏️ 🎨 🎮 🎵 📷 🎬 🌍 ✈️ 🚗 🏃 🍽️ 🛒 🎁 🐶 🌱 ☀️ 🌙 ⚡ 🔒 🔑 🧩 🐛 📱 💻 🧪 🏆 ❓'.split(' ');
 function emojiMenu(rect,cur,onPick){
  closeMenu();const m=el('div','menu swmenu');const l=el('div','lbl');l.style.padding='0 2px';l.textContent='Ícone';m.append(l);
@@ -848,17 +901,22 @@ function blockMenu(anchor,id){
 }
 function moveMenu(rect,id){
  const ct=curTab(),items=[];
- S.pages.forEach(p=>{items.push({label:p.title||'Sem título'});p.tabs.forEach(t=>{if(t!==ct)items.push({label:'   '+(t.title||'Sem título'),fn:()=>moveToTab(id,p.id,t.id)})})});
+ S.pages.forEach(p=>{if(p.tabs.every(t=>t._ro||t===ct))return;items.push({label:p.title||'Sem título'});p.tabs.forEach(t=>{if(t!==ct&&!t._ro)items.push({label:'   '+(t.title||'Sem título'),fn:()=>moveToTab(id,p.id,t.id)})})});
  items.push('-',{label:'+ Nova secção nesta página',fn:()=>{const p=curPage();const t={id:uid(),title:'Secção '+(p.tabs.length+1),blocks:[]};p.tabs.push(t);moveToTab(id,p.id,t.id)}});
  menu(null,items,rect);
 }
 function pageMenu(anchor,pid){
  const p=findPage(pid),i=S.pages.indexOf(p);
+ if(p._virtual)return;
+ if(p._recv){menu(anchor,[{label:'Partilhada por '+docOwner(p._doc)},
+  ...(p._ro?[]:[{label:'Mudar o nome',fn:()=>rename(p,'Nome da página')},{label:p.icon?'Mudar ícone…':'Escolher ícone…',fn:r=>emojiMenu(r,p.icon,e=>setIcon(p,e))},{label:'Nova secção',fn:()=>{S.cur.page=p.id;addTab(p)}}]),
+  '-',{label:'Sair da partilha',danger:1,fn:()=>leaveShare(p._doc)}]);return}
  menu(anchor,[
+  {label:p._doc?'Partilhar… 👥':'Partilhar…',fn:()=>openShare(p,'page')},'-',
   {label:'Mudar o nome',fn:()=>rename(p,'Nome da página')},
   {label:p.icon?'Mudar ícone…':'Escolher ícone…',fn:r=>emojiMenu(r,p.icon,e=>setIcon(p,e))},
   {label:'Nova secção',fn:()=>{S.cur.page=p.id;addTab(p)}},
-  {label:'Duplicar página',fn:()=>{const c=JSON.parse(JSON.stringify(p));c.id=uid();c.title+=' (cópia)';c.tabs.forEach(t=>{t.id=uid();walk(t.blocks,b=>b.id=uid())});S.pages.splice(i+1,0,c);save();renderAll()}},
+  {label:'Duplicar página',fn:()=>{const c=JSON.parse(JSON.stringify(p));stripShare(c);c.id=uid();c.title+=' (cópia)';c.tabs.forEach(t=>{t.id=uid();walk(t.blocks,b=>b.id=uid())});S.pages.splice(i+1,0,c);save();renderAll()}},
   {label:'Mover para cima',fn:()=>moveInArr(S.pages,i,-1)},
   {label:'Mover para baixo',fn:()=>moveInArr(S.pages,i,1)},
   '-',
@@ -871,12 +929,17 @@ function pageMenu(anchor,pid){
 }
 function tabMenu(anchor,pid,tid){
  const p=findPage(pid),i=p.tabs.findIndex(t=>t.id===tid),t=p.tabs[i];
- const others=S.pages.filter(x=>x!==p);
+ const others=S.pages.filter(x=>x!==p&&!x._virtual&&!x._ro);
+ if(t._recv&&t._doc){menu(anchor,[{label:'Partilhada por '+docOwner(t._doc)},
+  ...(t._ro?[]:[{label:'Mudar o nome',fn:()=>rename(t,'Nome da secção')},{label:t.icon?'Mudar ícone…':'Escolher ícone…',fn:r=>emojiMenu(r,t.icon,e=>setIcon(t,e))}]),
+  '-',{label:'Sair da partilha',danger:1,fn:()=>leaveShare(t._doc)}]);return}
+ if(t._ro)return;
  menu(anchor,[
+  ...(p._recv?[]:[{label:t._doc?'Partilhar… 👥':'Partilhar…',fn:()=>openShare(t,'tab',p)},'-']),
   {label:'Mudar o nome',fn:()=>rename(t,'Nome da secção')},
   {label:t.icon?'Mudar ícone…':'Escolher ícone…',fn:r=>emojiMenu(r,t.icon,e=>setIcon(t,e))},
   {label:'“Por fazer”: '+(t.todo?todoDesc(effTodo(t)):'padrão ('+todoDesc(S.settings.todo)+')')+'…',fn:()=>openTabTodo(t)},
-  {label:'Duplicar secção',fn:()=>{const c=JSON.parse(JSON.stringify(t));c.id=uid();c.title+=' (cópia)';walk(c.blocks,b=>b.id=uid());p.tabs.splice(i+1,0,c);save();renderAll()}},
+  {label:'Duplicar secção',fn:()=>{const c=JSON.parse(JSON.stringify(t));stripShare(c);c.id=uid();c.title+=' (cópia)';walk(c.blocks,b=>b.id=uid());p.tabs.splice(i+1,0,c);save();renderAll()}},
   {label:'Mover para cima',fn:()=>moveInArr(p.tabs,i,-1)},
   {label:'Mover para baixo',fn:()=>moveInArr(p.tabs,i,1)},
   others.length?{label:'Mover para outra página…',fn:r=>menu(null,others.map(o=>({label:o.title||'Sem título',fn:()=>{p.tabs.splice(i,1);if(!p.tabs.length)p.tabs.push({id:uid(),title:'Secção 1',blocks:[]});o.tabs.push(t);S.cur={page:o.id,tab:t.id};save();renderAll()}})),r)}:null,
@@ -1084,7 +1147,7 @@ NAV.addEventListener('click',e=>{
  else if(S.cur.page!==pid)S.cur={page:pid,tab:findPage(pid).tabs[0].id};
  save();renderAll();if(tid||it.dataset.todo)closeSideMobile();$('#main').scrollTop=0;
 });
-NAV.addEventListener('dblclick',e=>{const it=e.target.closest('.item');if(!it||it.dataset.todo||e.target.closest('.dots'))return;const p=findPage(it.dataset.page);if(it.dataset.tab)rename(p.tabs.find(t=>t.id===it.dataset.tab),'Nome da secção');else rename(p,'Nome da página')});
+NAV.addEventListener('dblclick',e=>{const it=e.target.closest('.item');if(!it||it.dataset.todo||e.target.closest('.dots'))return;const p=findPage(it.dataset.page);if(p._virtual||p._ro)return;if(it.dataset.tab){const tt=p.tabs.find(t=>t.id===it.dataset.tab);if(tt&&tt._ro)return}if(it.dataset.tab)rename(p.tabs.find(t=>t.id===it.dataset.tab),'Nome da secção');else rename(p,'Nome da página')});
 $('#addPage').onclick=addPage;
 const mq=matchMedia('(max-width:820px)');
 $('#menuBtn').onclick=()=>document.body.classList.toggle(mq.matches?'side-open':'side-closed');
@@ -1120,6 +1183,7 @@ $('#importFile').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new
 /* ---------- arrastar ---------- */
 let D=null;
 function startDrag(e,row){
+ if(RO)return;
  if(e.button>0)return;e.preventDefault();
  const id=row.dataset.id,L=locate(id);if(!L)return;
  D={id,b:L.b,row,sx:e.clientX,sy:e.clientY,x:e.clientX,y:e.clientY,started:false,target:null};
@@ -1157,7 +1221,7 @@ function computeTarget(){
  const hit=document.elementFromPoint(D.x,D.y);if(!hit)return;
  const side=hit.closest('#pages .item');
  if(side&&side.dataset.todo)return;
- if(side){const p=findPage(side.dataset.page);const tid=side.dataset.tab||p.tabs[0].id;if(tid===curTab().id)return;
+ if(side){const p=findPage(side.dataset.page);const tid=side.dataset.tab||p.tabs[0].id;if(tid===curTab().id)return;if((p.tabs.find(x=>x.id===tid)||{})._ro)return;
   side.classList.add('drop-hot');D.target={kind:'tab',page:p.id,tab:tid};return}
  if(!hit.closest('.doc'))return;
  const rows=[...B.querySelectorAll('.row')].filter(r=>!D.sub.has(r.dataset.id));
@@ -1209,7 +1273,9 @@ const AUTH_JS='https://cdn.jsdelivr.net/gh/Sebalca/plataforma-core@main/auth.js'
 var SB=null,USER=null,syncT=null,busy=false,applying=false,cloudState="off",blocked=false;
 var meta=(()=>{try{return JSON.parse(localStorage.getItem(META))||{}}catch(e){return{}}})();
 function saveMeta(){try{localStorage.setItem(META,JSON.stringify(meta))}catch(e){}}
-function payload(){const o={};for(const k in S)if(k!=='cur'&&k!=='ui')o[k]=S[k];return o}
+function payload(){const o={};for(const k in S)if(k!=='cur'&&k!=='ui')o[k]=S[k];
+ o.pages=S.pages.filter(p=>!p._recv).map(p=>p._doc?{id:p.id,_doc:p._doc,title:p.title,icon:p.icon}:(p.tabs.some(t=>t._doc)?Object.assign({},p,{tabs:p.tabs.map(t=>t._doc?{id:t.id,_doc:t._doc,title:t.title,icon:t.icon}:t)}):p));
+ return o}
 function hashOf(str){let h=5381;for(let i=0;i<str.length;i++)h=((h*33)^str.charCodeAt(i))>>>0;return h.toString(36)+'.'+str.length}
 const curHash=()=>hashOf(JSON.stringify(payload()));
 const isDirty=()=>curHash()!==meta.hash;
@@ -1255,7 +1321,7 @@ function applyRemote(valor,updatedAt){
  const keep={cur:S.cur,ui:S.ui};const v=JSON.parse(JSON.stringify(valor));const rev=v.rev||1;delete v.rev;
  S=fix(Object.assign(v,keep));
  meta.uid=USER.id;meta.rev=rev;meta.hash=curHash();meta.at=updatedAt;saveMeta();
- saveNow();histReset();renderAll();applying=false;setCloud('ok');
+ mountAll();saveNow();histReset();renderAll();applying=false;setCloud('ok');
 }
 async function sync(){
  if(!USER||busy)return;
@@ -1309,13 +1375,13 @@ $('#accOutBtn').onclick=async()=>{
  if(!confirm('Terminar sessão?\n\nAs tarefas ficam guardadas na conta e são removidas deste dispositivo. A sessão termina em todos os sites frisk.pt neste browser.'))return;
  if(isDirty()&&!blocked){clearTimeout(syncT);await push();if(isDirty()&&!confirm('Há alterações que ainda não foram guardadas na conta e vão perder-se. Continuar?'))return}
  try{await Auth.signOut()}catch(e){}
- window.__leaving=true;try{localStorage.removeItem(KEY);localStorage.removeItem(META)}catch(e){}
+ window.__leaving=true;try{localStorage.removeItem(KEY);localStorage.removeItem(META);localStorage.removeItem(KEY+'.docs')}catch(e){}
  removeEventListener('beforeunload',saveNow);location.reload();
 };
 function onUser(u){
  const prev=USER&&USER.id;USER=u||null;
  if(!USER){setCloud('off');return}
- if(prev!==USER.id){setCloud('saving');sync()}
+ if(prev!==USER.id){setCloud('saving');sync();startShare()}
  if($('#acc').open){renderAcc();if(!$('#accOut').hidden)return;setTimeout(()=>{if(USER&&$('#acc').open&&cloudState!=='conflict')$('#acc').close()},700)}
 }
 function loadScript(src){return new Promise((ok,ko)=>{const x=document.createElement('script');x.src=src;x.onload=ok;x.onerror=ko;document.head.append(x)})}
@@ -1333,6 +1399,218 @@ addEventListener('online',()=>{if(USER)sync()});
 addEventListener('offline',()=>{if(USER)setCloud('offline')});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&USER&&!busy&&!blocked)sync()});
 setInterval(()=>{if(USER&&!document.hidden&&!busy&&!blocked&&!isDirty())sync()},120000);
+/* =========================================================
+   PARTILHA de páginas/secções (tabelas tasks_docs / tasks_shares)
+   ========================================================= */
+var DOCS=new Map(),DMETA_KEY=KEY+'.docs',chan=null,shareT=null;
+var dmeta=(()=>{try{return JSON.parse(localStorage.getItem(DMETA_KEY))||{}}catch(e){return{}}})();
+function saveDMeta(){const o={};DOCS.forEach((d,id)=>{if(d.base)o[id]={rev:d.rev,base:d.base,own:d.own}});try{localStorage.setItem(DMETA_KEY,JSON.stringify(o))}catch(e){}}
+function docOwner(id){const d=DOCS.get(id);return d&&d.ownerEmail||'outra conta'}
+function stripShare(o){delete o._doc;delete o._recv;delete o._ro;delete o._virtual;(o.tabs||[]).forEach(t=>{delete t._doc;delete t._recv;delete t._ro})}
+function clean1(o){const c={};for(const k in o)if(k[0]!=='_')c[k]=o[k];return c}
+function docData(obj,kind){const c=clean1(obj);if(kind==='page')c.tabs=(obj.tabs||[]).map(clean1);return JSON.parse(JSON.stringify(c))}
+function findDoc(id){for(const p of S.pages){if(p._doc===id)return{page:p,obj:p,kind:'page'};for(let i=0;i<p.tabs.length;i++)if(p.tabs[i]._doc===id)return{page:p,obj:p.tabs[i],kind:'tab',ti:i}}return null}
+function roOf(id){for(const p of S.pages)for(const t of p.tabs)if(t._ro&&locate(id,t.blocks))return true;return false}
+function hasPh(o){return o._ph||(o.tabs||[]).some(t=>t._ph)}
+function build(id,data){
+ const d=DOCS.get(id);const o=JSON.parse(JSON.stringify(data));o._doc=id;
+ if(d&&!d.own){o._recv=true;if(!d.canEdit)o._ro=true}
+ if(d&&d.kind==='page'){o.tabs=Array.isArray(o.tabs)&&o.tabs.length?o.tabs:[{id:uid(),title:'Secção 1',blocks:[]}];o.tabs.forEach(t=>{if(o._ro)t._ro=true})}
+ else o.blocks=Array.isArray(o.blocks)?o.blocks:[];
+ return o;
+}
+function virt(){let v=S.pages.find(p=>p._virtual);if(!v){v={id:'__shared',title:'Secções partilhadas comigo',_virtual:true,_recv:true,tabs:[],doneLog:[]};S.pages.push(v)}return v}
+function placeDoc(id,data){
+ const d=DOCS.get(id);if(!d)return;const o=build(id,data);const f=findDoc(id);
+ if(f){if(f.kind==='page'){const i=S.pages.indexOf(f.page);o.doneLog=o.doneLog||f.page.doneLog;S.pages[i]=o}else f.page.tabs[f.ti]=o}
+ else if(!d.own){if(d.kind==='page')S.pages.push(o);else virt().tabs.push(o)}
+ d.cur=JSON.stringify(docData(o,d.kind));
+}
+function unplace(id){const f=findDoc(id);if(!f)return;if(f.kind==='page')S.pages.splice(S.pages.indexOf(f.page),1);else{f.page.tabs.splice(f.ti,1);if(f.page._virtual&&!f.page.tabs.length)S.pages.splice(S.pages.indexOf(f.page),1)}
+ if(!S.pages.some(p=>!p._recv))S.pages.unshift({id:uid(),title:'Nova página',tabs:[{id:uid(),title:'Secção 1',blocks:[nb()]}],doneLog:[]})}
+function mountAll(){DOCS.forEach((d,id)=>{const src=d.cur||d.base;if(!src)return;const f=findDoc(id);if(!f&&d.own)return;if(f&&!hasPh(f.obj))return;placeDoc(id,JSON.parse(src))});fix(S)}
+function keepFocus(fn){const a=document.activeElement,fid=a&&a.classList&&a.classList.contains('txt')&&a.parentNode.dataset.id,pos=fid?caretPos(a):0;
+ fn();if(fid){const t=txtOf(fid);if(t)focusB(fid,Math.min(pos,t.textContent.length))}}
+
+/* ---- fusão a 3 vias (tarefa a tarefa) ---- */
+function flatDoc(kind,data){
+ const n=new Map(),kids=new Map();const add=(p,id)=>{if(!kids.has(p))kids.set(p,[]);kids.get(p).push(id)};
+ const omit=(o,ks)=>{const c={};for(const k in o)if(!ks.includes(k))c[k]=o[k];return JSON.stringify(c)};
+ const blocks=(arr,p)=>arr.forEach(b=>{n.set(b.id,{p,props:omit(b,['children']),k:'b'});add(p,b.id);blocks(b.children||[],b.id)});
+ const root=omit(data,['tabs','blocks','id','doneLog']);
+ if(kind==='page')(data.tabs||[]).forEach(t=>{n.set(t.id,{p:'R',props:omit(t,['blocks']),k:'t'});add('R',t.id);blocks(t.blocks||[],t.id)});
+ else blocks(data.blocks||[],'R');
+ return{n,kids,root,doneLog:data.doneLog||[],id:data.id};
+}
+function merge3(kind,B,L,R){
+ const b=flatDoc(kind,B),l=flatDoc(kind,L),r=flatDoc(kind,R);
+ const keep=new Map();const ids=new Set([...l.n.keys(),...r.n.keys()]);
+ ids.forEach(id=>{const x=b.n.get(id),y=l.n.get(id),z=r.n.get(id);
+  if(y&&z){keep.set(id,{props:(x&&y.props!==x.props)||!x?y.props:z.props,p:(x&&y.p!==x.p)||!x?y.p:z.p,k:y.k})}
+  else if(y){if(!x||y.props!==x.props||y.p!==x.p)keep.set(id,y)}
+  else if(z){if(!x||z.props!==x.props||z.p!==x.p)keep.set(id,z)}});
+ const order=new Map();const parents=new Set(['R',...keep.keys()]);
+ parents.forEach(P=>{const cand=[...keep].filter(([,v])=>v.p===P).map(([k])=>k);if(!cand.length)return;
+  const lc=JSON.stringify(l.kids.get(P)||[])!==JSON.stringify(b.kids.get(P)||[]);
+  const prim=(lc?l.kids.get(P):r.kids.get(P))||[],sec=(lc?r.kids.get(P):l.kids.get(P))||[];
+  const list=prim.filter(id=>cand.includes(id));
+  [...sec,...cand].forEach(id=>{if(!cand.includes(id)||list.includes(id))return;const i=sec.indexOf(id);let j=-1;for(let q=i-1;q>=0;q--){j=list.indexOf(sec[q]);if(j>=0)break}list.splice(j+1,0,id)});
+  order.set(P,list)});
+ const seen=new Set();
+ const mk=id=>{seen.add(id);const v=keep.get(id);const o=JSON.parse(v.props);const ch=(order.get(id)||[]).filter(c=>!seen.has(c)).map(mk);if(v.k==='t')o.blocks=ch;else o.children=ch;return o};
+ const out=JSON.parse(JSON.stringify(l.root)!==JSON.stringify(b.root)?l.root:r.root);out.id=L.id||R.id;
+ const top=(order.get('R')||[]).map(mk);
+ const orphans=[...keep.keys()].filter(id=>!seen.has(id)&&keep.get(id).k==='b').map(id=>{const o=JSON.parse(keep.get(id).props);o.children=[];return o});
+ if(kind==='page'){out.tabs=top;if(!out.tabs.length)out.tabs=[{id:uid(),title:'Secção 1',blocks:[]}];out.tabs[0].blocks.push(...orphans);
+  out.doneLog=[...new Set([...l.doneLog,...r.doneLog])].sort((a,c)=>a-c)}
+ else out.blocks=[...top,...orphans];
+ return out;
+}
+
+/* ---- sincronização de cada documento ---- */
+function docsChanged(){
+ if(!USER||applying)return;let reverted=false;
+ DOCS.forEach((d,id)=>{
+  const f=findDoc(id);
+  if(!f){if(d.own&&d.base&&!d.deleting){d.deleting=true;setTimeout(()=>{if(!findDoc(id))deleteDoc(id);else d.deleting=false},1500)}return}
+  if(hasPh(f.obj))return;
+  const cur=JSON.stringify(docData(f.obj,d.kind));d.cur=cur;
+  if(cur===d.base)return;
+  if(!d.canEdit){placeDoc(id,JSON.parse(d.base));reverted=true;return}
+  clearTimeout(d.t);d.t=setTimeout(()=>pushDoc(id),500);
+ });
+ if(reverted){fix(S);renderAll();toast('Esta partilha é só de leitura')}
+}
+async function pushDoc(id){
+ const d=DOCS.get(id);if(!d||!USER)return;if(d.busy){clearTimeout(d.t);d.t=setTimeout(()=>pushDoc(id),400);return}
+ const f=findDoc(id);if(!f)return;const cur=JSON.stringify(docData(f.obj,d.kind));if(cur===d.base)return;
+ d.busy=true;let res;
+ try{res=await SB.from('tasks_docs').update({data:JSON.parse(cur),rev:d.rev+1}).eq('id',id).eq('rev',d.rev).select('rev')}catch(e){res={error:e}}
+ d.busy=false;
+ if(res.error){setCloud(navigator.onLine?'error':'offline',res.error.message);clearTimeout(d.t);d.t=setTimeout(()=>pushDoc(id),8000);return}
+ if(res.data&&res.data.length){d.rev=res.data[0].rev;d.base=cur;saveDMeta();if(d.pending){const p=d.pending;d.pending=null;onDocRemote(p)}if(cloudState==='saving'&&!isDirty())setCloud('ok');docsChanged();return}
+ // versão mudou entretanto (ou documento apagado)
+ const {data:row}=await SB.from('tasks_docs').select('id,kind,data,rev').eq('id',id).maybeSingle();
+ if(!row){if(d.own){const ins=await SB.from('tasks_docs').insert({id,kind:d.kind,data:JSON.parse(cur)}).select('rev');if(!ins.error){d.rev=ins.data[0].rev;d.base=cur;saveDMeta()}}else{DOCS.delete(id);unplace(id);fix(S);saveDMeta();renderAll();toast('Esta partilha já não está disponível')}return}
+ applyMerged(id,row);
+}
+function applyMerged(id,row){
+ const d=DOCS.get(id);const f=findDoc(id);if(!d)return;
+ const local=f?JSON.parse(JSON.stringify(docData(f.obj,d.kind))):null;
+ const base=d.base?JSON.parse(d.base):null;const dirty=local&&JSON.stringify(local)!==d.base;
+ const next=dirty&&base?merge3(d.kind,base,local,row.data):row.data;
+ d.rev=row.rev;d.base=JSON.stringify(row.data);saveDMeta();
+ applying=true;keepFocus(()=>{placeDoc(id,next);fix(S);try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}H.last=JSON.stringify(S.pages);renderAll()});applying=false;
+ if(dirty)docsChanged();
+}
+function onDocRemote(row){
+ const d=DOCS.get(row.id);if(!d){scheduleShares();return}
+ if(d.busy){d.pending=row;return}
+ if(row.rev<=d.rev)return;
+ applyMerged(row.id,row);
+}
+async function deleteDoc(id){const d=DOCS.get(id);if(!d)return;const r=await SB.from('tasks_docs').delete().eq('id',id);if(!r.error){DOCS.delete(id);saveDMeta()}else d.deleting=false}
+async function leaveShare(id){
+ const d=DOCS.get(id);if(!d||!confirm('Sair desta partilha? Deixas de ver esta '+(d.kind==='page'?'página':'secção')+'.'))return;
+ const r=await SB.from('tasks_shares').delete().eq('id',d.shareId);if(r.error){toast('Não foi possível sair: '+r.error.message);return}
+ DOCS.delete(id);saveDMeta();unplace(id);fix(S);S.cur={};saveNow();renderAll();toast('Saíste da partilha');
+}
+
+/* ---- carregar partilhas e convites ---- */
+function scheduleShares(){clearTimeout(shareT);shareT=setTimeout(loadShares,400)}
+async function loadShares(){
+ if(!USER||!SB)return;
+ const ownIds=new Set();S.pages.forEach(p=>{if(p._doc&&!p._recv)ownIds.add(p._doc);p.tabs.forEach(t=>{if(t._doc&&!t._recv)ownIds.add(t._doc)})});
+ const [mine,shared]=await Promise.all([SB.from('tasks_docs').select('id,kind,data,rev').eq('owner',USER.id),SB.rpc('tasks_shared_with_me')]);
+ if(mine.error||shared.error)return;
+ const recv=shared.data||[];
+ const rIds=recv.map(x=>x.doc_id);let rdocs=[];
+ if(rIds.length){const q=await SB.from('tasks_docs').select('id,kind,data,rev').in('id',rIds);if(q.error)return;rdocs=q.data}
+ const seen=new Set();
+ const handle=(row,own,info)=>{
+  seen.add(row.id);let d=DOCS.get(row.id);const m=dmeta[row.id];
+  if(!d){d={kind:row.kind,own,rev:m?m.rev:0,base:m?m.base:null};DOCS.set(row.id,d)}
+  d.own=own;d.kind=row.kind;d.canEdit=own||!!(info&&info.can_edit);d.ownerEmail=own?USER.email:(info&&info.owner_email);d.shareId=info&&info.share_id;
+  const f=findDoc(row.id);
+  if(!f||hasPh(f.obj)){if(own&&!f)return;d.rev=row.rev;d.base=JSON.stringify(row.data);placeDoc(row.id,row.data);return}
+  f.obj._ro=!d.canEdit?true:undefined;if(f.kind==='page')f.obj.tabs.forEach(t=>{t._ro=f.obj._ro});
+  if(!d.base){d.rev=row.rev;d.base=JSON.stringify(row.data);placeDoc(row.id,row.data);return}
+  if(row.rev!==d.rev)applyMerged(row.id,row);else docsChanged();
+ };
+ (mine.data||[]).forEach(r=>handle(r,true));
+ rdocs.forEach(r=>handle(r,false,recv.find(x=>x.doc_id===r.id)));
+ DOCS.forEach((d,id)=>{if(!seen.has(id)){if(!d.own){DOCS.delete(id);unplace(id)}else if(!findDoc(id))DOCS.delete(id)}});
+ // páginas próprias que apontam para documentos que já não existem → mantém o conteúdo local como página normal
+ S.pages.forEach(p=>{if(p._doc&&!p._recv&&!DOCS.has(p._doc)&&ownIds.has(p._doc)){if(hasPh(p))return;delete p._doc}p.tabs.forEach(t=>{if(t._doc&&!t._recv&&!DOCS.has(t._doc)&&!hasPh(t))delete t._doc})});
+ fix(S);saveDMeta();applying=true;try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}applying=false;H.last=JSON.stringify(S.pages);renderAll();
+ loadInvites();
+}
+async function loadInvites(){
+ if(!USER)return;const r=await SB.rpc('tasks_my_invites');if(r.error)return;INV=r.data||[];
+ const bar=$('#invBar');bar.hidden=!INV.length;$('#invTxt').textContent=`📩 Tens ${INV.length} convite${INV.length===1?'':'s'} de partilha`;
+ if($('#inv').open)renderInv();
+}
+var INV=[];
+function renderInv(){
+ const L=$('#invList');L.innerHTML='';if(!INV.length){L.innerHTML='<p class="hint">Não tens convites pendentes.</p>';return}
+ INV.forEach(v=>{const r=el('div','inv-row');const t=el('div');t.innerHTML=`<b>${esc(v.owner_email)}</b> partilhou a ${v.kind==='page'?'página':'secção'} <b>“${esc(v.title||'Sem título')}”</b> contigo · ${v.can_edit?'podes editar':'só podes ver'}`;r.append(t);
+  const bb=el('div','acc-btns');const a=el('button','btn pri');a.textContent='Aceitar';const n=el('button','btn');n.textContent='Recusar';
+  a.onclick=()=>respond(v,true);n.onclick=()=>respond(v,false);bb.append(a,n);r.append(bb);L.append(r)});
+}
+async function respond(v,ok){const r=await SB.rpc('tasks_share_respond',{p_share:v.id,p_accept:ok});if(r.error||r.data!=='ok'){$('#invMsg').textContent='Não foi possível responder.';return}
+ INV=INV.filter(x=>x.id!==v.id);renderInv();loadInvites();if(ok){await loadShares();const f=findDoc(v.doc_id);if(f){S.cur={page:f.page.id,tab:f.kind==='tab'?f.obj.id:f.obj.tabs[0].id};renderAll()}toast('Partilha aceite');if(!INV.length)$('#inv').close()}}
+$('#invOpen').onclick=()=>{$('#invMsg').textContent='';renderInv();$('#inv').showModal()};
+
+/* ---- diálogo de partilha (dono) ---- */
+var SH=null;
+function openShare(obj,kind,page){
+ if(!USER){toast('Entra na tua conta para partilhar');openAcc();return}
+ if(kind==='tab'&&page&&page._doc){toast('Esta secção já está partilhada através da página');return}
+ if(kind==='page'&&obj.tabs.some(t=>t._doc)&&!obj._doc){alert('Uma secção desta página já está partilhada à parte. Para partilhar a página inteira, deixa primeiro de partilhar essa secção (remove todas as pessoas dela).');return}
+ SH={obj,kind};$('#shTitle').textContent=`Partilhar ${kind==='page'?'a página':'a secção'} “${obj.title||'Sem título'}”`;
+ $('#shMsg').textContent='';$('#shMsg').className='';$('#shEmail').value='';closeSideMobile();$('#share').showModal();renderShareList();
+}
+async function ensureDoc(){
+ const o=SH.obj;if(o._doc&&DOCS.has(o._doc))return o._doc;
+ const data=docData(o,SH.kind);const r=await SB.from('tasks_docs').insert({kind:SH.kind,data}).select('id,rev').single();
+ if(r.error)throw r.error;const id=r.data.id;
+ DOCS.set(id,{kind:SH.kind,own:true,canEdit:true,rev:r.data.rev,base:JSON.stringify(data),ownerEmail:USER.email});
+ o._doc=id;saveDMeta();save();renderSide();return id;
+}
+async function renderShareList(){
+ const L=$('#shList');L.innerHTML='';const id=SH&&SH.obj._doc;if(!id)return;
+ const r=await SB.from('tasks_shares').select('id,email,can_edit,status').eq('doc_id',id).order('created_at');if(r.error)return;
+ (r.data||[]).forEach(x=>{const row=el('div','sh-row');
+  const em=el('span','em');em.textContent=x.email;row.append(em);
+  const tg=el('span','tag'+(x.status==='accepted'?' ok':x.status==='declined'?' no':''));tg.textContent={pending:'Pendente',accepted:'Aceite',declined:'Recusou'}[x.status];row.append(tg);
+  const sel=el('select');sel.innerHTML='<option value="1">Pode editar</option><option value="0">Pode ver</option>';sel.value=x.can_edit?'1':'0';
+  sel.onchange=async()=>{const u=await SB.from('tasks_shares').update({can_edit:sel.value==='1'}).eq('id',x.id);if(u.error)toast('Erro: '+u.error.message)};row.append(sel);
+  const rm=el('button','x');rm.title='Remover acesso';rm.textContent='✕';rm.onclick=async()=>{if(!confirm('Remover o acesso de '+x.email+'?'))return;const u=await SB.from('tasks_shares').delete().eq('id',x.id);if(u.error)toast('Erro: '+u.error.message);else renderShareList()};row.append(rm);
+  L.append(row)});
+}
+$('#shForm').onsubmit=async e=>{e.preventDefault();const msg=$('#shMsg');const em=$('#shEmail').value.trim();if(!em)return;
+ msg.className='';msg.textContent='A convidar…';
+ try{const id=await ensureDoc();const r=await SB.rpc('tasks_share_invite',{p_doc:id,p_email:em,p_can_edit:$('#shPerm').value==='1'});
+  if(r.error)throw r.error;
+  const t={ok:'Convite enviado. A pessoa vê-o quando abrir o Tasks.',no_account:'Não existe nenhuma conta com esse email nos sites frisk.pt.',self:'Esse é o teu próprio email.',invalid:'Email inválido.',limit:'Limite de 50 pessoas atingido.',not_owner:'Só o dono pode partilhar.'}[r.data]||r.data;
+  msg.textContent=t;msg.className=r.data==='ok'?'':'err';if(r.data==='ok')$('#shEmail').value='';renderShareList();
+ }catch(err){msg.textContent='Erro: '+(err.message||err);msg.className='err'}};
+
+/* ---- tempo real ---- */
+function startShare(){
+ if(!SB||!USER)return;
+ // carregar o que já está em cache local
+ Object.keys(dmeta).forEach(id=>{if(!DOCS.has(id)){const m=dmeta[id];const f=findDoc(id);DOCS.set(id,{kind:f?f.kind:'tab',own:m.own!==false,canEdit:true,rev:m.rev,base:m.base})}});
+ setTimeout(loadShares,600);
+ try{if(chan)SB.removeChannel(chan);
+  chan=SB.channel('tasks-'+USER.id)
+   .on('postgres_changes',{event:'*',schema:'public',table:'tasks_docs'},p=>{if(p.eventType==='DELETE'){const id=p.old&&p.old.id;const d=DOCS.get(id);if(d&&!d.own){DOCS.delete(id);unplace(id);fix(S);saveDMeta();renderAll();toast('Uma partilha foi removida pelo dono')}return}if(p.new)onDocRemote(p.new)})
+   .on('postgres_changes',{event:'*',schema:'public',table:'tasks_shares'},()=>scheduleShares())
+   .subscribe();
+ }catch(e){}
+}
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&USER)scheduleShares()});
+
 initCloud();
 
 renderAll();
