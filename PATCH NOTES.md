@@ -1,5 +1,11 @@
 # Checklist — PATCH NOTES
 
+## v0.6 — 2026-10-27
+- **Mudar a ordem das páginas e secções arrastando na barra lateral**. No computador basta clicar e arrastar; no telemóvel, premir um momento e depois arrastar. Uma linha azul mostra onde vai ficar.
+  - As páginas reorganizam-se dentro do seu grupo ("as minhas" ou "Partilhadas comigo").
+  - As secções reorganizam-se dentro da página. Largar uma secção em cima de outra página move-a para essa página.
+  - As opções "Mover para cima/baixo" do menu ⋮ continuam disponíveis.
+
 ## v0.5b — 2026-10-27
 - O painel de comentários volta a abrir por cima do documento, à direita, sem o mover nem encolher (anula a alteração de layout da v0.5a). Clicar fora continua a fechá-lo.
 

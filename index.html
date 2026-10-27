@@ -37,6 +37,11 @@ body.side-closed #side{margin-left:-270px}
 .item.tab.active .ico,.item.tab.active .count{color:var(--accent)}
 .addtab{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:13px;padding:6px 12px;border-radius:18px;width:100%}
 .addtab:hover{background:var(--hover);color:var(--text)}
+.item.drop-before{box-shadow:inset 0 3px 0 -1px var(--accent)}
+.item.drop-after{box-shadow:inset 0 -3px 0 -1px var(--accent)}
+.item.sd-src{opacity:.35}
+.sd-ghost{position:fixed;z-index:60;pointer-events:none;background:var(--panel);box-shadow:0 6px 20px rgba(0,0,0,.25);border-radius:18px;opacity:.95;width:230px}
+body.sd-on,body.sd-on *{cursor:grabbing!important;user-select:none!important;-webkit-user-select:none!important}
 .item.drop-hot{background:var(--accent-soft);outline:2px dashed var(--accent);outline-offset:-2px}
 .side-foot{border-top:1px solid var(--line);padding:8px;display:flex;gap:4px;flex-wrap:wrap}
 .side-foot button{font-size:13px;color:var(--muted);padding:6px 10px;border-radius:14px}
@@ -437,6 +442,7 @@ dialog .close{margin-top:16px;float:right;color:var(--accent);font-weight:600;pa
     <tr><td>Pega ⠿: clique</td><td>Copiar o texto da linha (ou das linhas selecionadas)</td></tr>
     <tr><td>Pega ⠿: premir</td><td>Abrir as opções da linha</td></tr>
     <tr><td>Pega ⠿: arrastar</td><td>Mover (também para outra secção/página na barra lateral). Um título leva consigo tudo o que está por baixo dele; uma tarefa leva as subtarefas.</td></tr>
+    <tr><td>Barra lateral: arrastar</td><td>Mudar a ordem das páginas e secções (no telemóvel: premir e arrastar). Largar uma secção em cima de outra página move-a para lá.</td></tr>
     <tr><td>Arrastar para a direita</td><td>Largar mais à direita de uma tarefa cria subtarefa</td></tr>
     <tr><td>💬 ao lado da linha</td><td>Ver/escrever comentários (também no menu ⋮ → Comentar). <kbd>Ctrl</kbd>+<kbd>Enter</kbd> envia</td></tr>
     <tr class="grp"><td colspan="2">Selecionar várias linhas</td></tr>
@@ -497,7 +503,7 @@ dialog .close{margin-top:16px;float:right;color:var(--accent);font-weight:600;pa
 (()=>{
 'use strict';
 /* =========================================================
-   Checklist v0.5b — dados em localStorage.
+   Checklist v0.6 — dados em localStorage.
    Estrutura pronta para Supabase (user_site_data:
    site_id 'checklist', chave 'data', valor = objeto S).
    ========================================================= */
@@ -1195,7 +1201,51 @@ PT.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();selectA
 
 /* ---------- barra lateral ---------- */
 const NAV=$('#pages');
+/* ---------- arrastar páginas e secções na barra lateral ---------- */
+var SD=null,sdNoClick=false;
+function sdCan(it){if(!it||it.dataset.todo||!it.classList.contains('item'))return false;const p=findPage(it.dataset.page);if(!p)return false;
+ if(it.dataset.tab)return !p._ro&&!p._virtual;return true}
+function sdBegin(){
+ SD.started=true;closeMenu();document.body.classList.add('sd-on');SD.el.classList.add('sd-src');
+ const g=SD.el.cloneNode(true);g.classList.add('sd-ghost');g.classList.remove('sd-src','active');const d=g.querySelector('.dots');if(d)d.remove();document.body.append(g);SD.g=g;
+ if(navigator.vibrate&&SD.touch)navigator.vibrate(20);sdMove(SD.x,SD.y);
+}
+function sdClear(){document.querySelectorAll('#pages .drop-before,#pages .drop-after,#pages .drop-hot').forEach(x=>x.classList.remove('drop-before','drop-after','drop-hot'))}
+function sdMove(x,y){
+ SD.x=x;SD.y=y;if(!SD.started)return;SD.g.style.left=(x+12)+'px';SD.g.style.top=(y-18)+'px';sdClear();SD.target=null;
+ const nr=NAV.getBoundingClientRect();if(y<nr.top+30)NAV.scrollTop-=8;else if(y>nr.bottom-30)NAV.scrollTop+=8;
+ const hit=document.elementFromPoint(x,y);const it=hit&&hit.closest&&hit.closest('#pages .item');if(!it||it===SD.el||it.dataset.todo)return;
+ const r=it.getBoundingClientRect(),pos=y<r.top+r.height/2?'before':'after';
+ const P=findPage(SD.pid);
+ if(!SD.tid){ // página: só dentro do mesmo grupo (minhas / partilhadas comigo)
+  if(it.dataset.tab)return;const Q=findPage(it.dataset.page);if(!Q||!!Q._recv!==!!P._recv)return;
+  SD.target={pid:Q.id,pos};it.classList.add('drop-'+pos);return}
+ if(it.dataset.tab){if(it.dataset.page!==SD.pid)return;SD.target={tid:it.dataset.tab,pos};it.classList.add('drop-'+pos);return}
+ const Q=findPage(it.dataset.page);if(!Q||Q===P||Q._virtual||Q._ro||P._virtual)return;
+ SD.target={into:Q.id};it.classList.add('drop-hot');
+}
+function sdEnd(){
+ const d=SD;SD=null;if(!d)return;clearTimeout(d.lp);if(!d.started)return;
+ sdNoClick=true;setTimeout(()=>sdNoClick=false,50);document.body.classList.remove('sd-on');d.el.classList.remove('sd-src');d.g.remove();sdClear();
+ const t=d.target;if(!t)return;const P=findPage(d.pid);
+ if(!d.tid){const a=S.pages,i=a.indexOf(P);a.splice(i,1);let j=a.findIndex(x=>x.id===t.pid);if(t.pos==='after')j++;a.splice(j,0,P)}
+ else{const i=P.tabs.findIndex(x=>x.id===d.tid),T=P.tabs[i];
+  if(t.into){const Q=findPage(t.into);P.tabs.splice(i,1);if(!P.tabs.length)P.tabs.push({id:uid(),title:'Secção 1',blocks:[nb()]});Q.tabs.push(T);S.cur={page:Q.id,tab:T.id};toast(`Secção movida para “${Q.title||'Sem título'}”`)}
+  else{P.tabs.splice(i,1);let j=P.tabs.findIndex(x=>x.id===t.tid);if(t.pos==='after')j++;P.tabs.splice(j,0,T)}}
+ save();renderAll();
+}
+NAV.addEventListener('mousedown',e=>{if(e.button!==0||e.target.closest('.dots,.addtab'))return;const it=e.target.closest('.item');if(!sdCan(it))return;
+ SD={el:it,pid:it.dataset.page,tid:it.dataset.tab,sx:e.clientX,sy:e.clientY,x:e.clientX,y:e.clientY,started:false,touch:false};e.preventDefault()});
+addEventListener('mousemove',e=>{if(!SD||SD.touch)return;if(!SD.started){if(Math.hypot(e.clientX-SD.sx,e.clientY-SD.sy)<6)return;sdBegin()}sdMove(e.clientX,e.clientY)});
+addEventListener('mouseup',()=>{if(SD&&!SD.touch)sdEnd()});
+NAV.addEventListener('touchstart',e=>{if(e.touches.length!==1||e.target.closest('.dots,.addtab'))return;const it=e.target.closest('.item');if(!sdCan(it))return;const t=e.touches[0];
+ SD={el:it,pid:it.dataset.page,tid:it.dataset.tab,sx:t.clientX,sy:t.clientY,x:t.clientX,y:t.clientY,started:false,touch:true};SD.lp=setTimeout(()=>{if(SD&&!SD.started)sdBegin()},380)},{passive:true});
+NAV.addEventListener('touchmove',e=>{if(!SD||!SD.touch)return;const t=e.touches[0];if(!SD.started){if(Math.hypot(t.clientX-SD.sx,t.clientY-SD.sy)>8){clearTimeout(SD.lp);SD=null}return}e.preventDefault();sdMove(t.clientX,t.clientY)},{passive:false});
+NAV.addEventListener('touchend',e=>{if(SD&&SD.touch){if(SD.started)e.preventDefault();sdEnd()}});
+NAV.addEventListener('touchcancel',()=>{if(SD){clearTimeout(SD.lp);if(SD.started){SD.target=null;sdEnd()}else SD=null}});
+NAV.addEventListener('contextmenu',e=>{if(SD&&SD.touch)e.preventDefault()});
 NAV.addEventListener('click',e=>{
+ if(sdNoClick){e.stopPropagation();e.preventDefault();return}
  const it=e.target.closest('.item');if(!it)return;const pid=it.dataset.page,tid=it.dataset.tab;
  const dots=e.target.closest('.dots');
  if(dots){e.stopPropagation();tid?tabMenu(dots,pid,tid):pageMenu(dots,pid);return}
