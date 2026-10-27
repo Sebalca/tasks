@@ -225,6 +225,7 @@ body.is-dragging,body.is-dragging *{cursor:grabbing!important;user-select:none}
 .row.c-on{background:color-mix(in srgb,var(--accent) 10%,transparent)}
 #cpanel{position:fixed;top:0;right:0;bottom:0;width:min(370px,100vw);background:var(--panel);border-left:1px solid var(--line);box-shadow:-8px 0 24px rgba(0,0,0,.12);z-index:45;display:flex;flex-direction:column;transform:translateX(105%);transition:transform .2s}
 #cpanel.open{transform:none}
+@media (min-width:1000px){body.cp-open #main{padding-right:370px}}
 .cp-h{display:flex;align-items:center;gap:8px;padding:14px 14px 10px 18px;border-bottom:1px solid var(--line)}
 .cp-h b{flex:1}
 .cp-q{font-size:13px;color:var(--muted);border-left:3px solid var(--accent);padding:4px 10px;margin:12px 18px 4px;white-space:pre-wrap;word-break:break-word;max-height:90px;overflow:auto}
@@ -497,7 +498,7 @@ dialog .close{margin-top:16px;float:right;color:var(--accent);font-weight:600;pa
 (()=>{
 'use strict';
 /* =========================================================
-   Checklist v0.5 — dados em localStorage.
+   Checklist v0.5a — dados em localStorage.
    Estrutura pronta para Supabase (user_site_data:
    site_id 'checklist', chave 'data', valor = objeto S).
    ========================================================= */
@@ -1694,9 +1695,9 @@ async function openComments(bid){
  }
  CP={doc:CUR_DOC,bid};document.querySelectorAll('.row.c-on').forEach(r=>r.classList.remove('c-on'));
  const row=document.querySelector(`#blocks .row[data-id="${bid}"],#doneList .row[data-id="${bid}"]`);if(row)row.classList.add('c-on');
- $('#cpanel').classList.add('open');renderCP();if(canCommentCur())setTimeout(()=>$('#cpText').focus(),220);
+ $('#cpanel').classList.add('open');document.body.classList.add('cp-open');renderCP();if(canCommentCur())setTimeout(()=>$('#cpText').focus(),220);
 }
-function closeCP(){CP=null;$('#cpanel').classList.remove('open');document.querySelectorAll('.row.c-on').forEach(r=>r.classList.remove('c-on'))}
+function closeCP(){CP=null;$('#cpanel').classList.remove('open');document.body.classList.remove('cp-open');document.querySelectorAll('.row.c-on').forEach(r=>r.classList.remove('c-on'))}
 function renderCP(){
  if(!CP)return;const L=locate(CP.bid);$('#cpQuote').textContent=L?L.b.text||'(sem texto)':'(linha apagada)';
  const th=thread(CP.doc,CP.bid);const list=th?th.list:[];const can=canCommentCur();const d=DOCS.get(CP.doc);
@@ -1715,7 +1716,8 @@ async function sendComment(){
  if(r.error){toast('Erro: '+r.error.message);return}t.value='';loadComments();
 }
 async function setResolved(v){if(!CP)return;const r=await SB.from('tasks_comment_threads').upsert({doc_id:CP.doc,block_id:CP.bid,resolved:v,resolved_by:USER.id,resolved_at:new Date().toISOString()});if(r.error)toast('Erro: '+r.error.message);else loadComments()}
-$('#cpClose').onclick=closeCP;$('#cpSend').onclick=sendComment;
+$('#cpClose').onclick=closeCP;
+document.addEventListener('pointerdown',e=>{if(!CP||!$('#cpanel').classList.contains('open'))return;const t=e.target;if(!t.closest||t.closest('#cpanel,.cbtn,.menu,dialog,#toast'))return;closeCP()},true);$('#cpSend').onclick=sendComment;
 $('#cpText').addEventListener('keydown',e=>{if(e.key==='Enter'&&(e.ctrlKey||e.metaKey)){e.preventDefault();sendComment()}if(e.key==='Escape')closeCP()});
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('.cbtn');if(b){e.preventDefault();openComments(b.dataset.c)}});
 

@@ -1,5 +1,9 @@
 # Checklist — PATCH NOTES
 
+## v0.5a — 2026-10-27
+- Com o painel de comentários aberto, clicar fora dele fecha-o. Clicar no 💬 de outra linha muda diretamente para essa conversa.
+- Em ecrãs largos, o documento encolhe quando o painel de comentários está aberto, para o painel não tapar as linhas nem os botões 💬.
+
 ## v0.5 — 2026-10-27
 - **Nova permissão "Pode comentar"**: a pessoa vê tudo e comenta, mas não altera tarefas. Fica disponível nos convites, na lista de pessoas e no link de partilha (Pode editar / Pode comentar / Pode ver).
 - **Comentários por linha** (tarefa ou título):
