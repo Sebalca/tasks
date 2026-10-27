@@ -1,5 +1,18 @@
 # Checklist — PATCH NOTES
 
+## v0.5 — 2026-10-27
+- **Nova permissão "Pode comentar"**: a pessoa vê tudo e comenta, mas não altera tarefas. Fica disponível nos convites, na lista de pessoas e no link de partilha (Pode editar / Pode comentar / Pode ver).
+- **Comentários por linha** (tarefa ou título):
+  - O botão 💬 aparece ao lado da linha: ao passar o rato fica 💬+ para comentar, e quando já há comentários mostra 💬 com o número. Também está no menu ⋮ → "Comentar…".
+  - Painel lateral com a conversa: autor, data, Ctrl+Enter para enviar, apagar os teus comentários (o dono pode apagar qualquer um), Resolver/Reabrir. Um comentário novo reabre a conversa.
+  - Os comentários atualizam em tempo real. Também funcionam em páginas não partilhadas (ficam privados até partilhares).
+- **Link de partilha** (na janela "Partilhar…"):
+  - "Criar link" e escolher **Qualquer pessoa com o link (sem conta) · só ver** ou **Só pessoas com conta frisk.pt** (Pode editar / comentar / ver).
+  - Botão "Copiar". O link pode ser desativado e reativado, ou substituído por um novo ("Criar novo link"), e nesse caso o antigo deixa de funcionar.
+  - Link com conta: quem o abre e entra na conta (ou cria uma) fica logo com acesso e aparece na lista de pessoas com a etiqueta "Via link".
+  - Link público: abre uma vista só de leitura (com separadores, se for uma página), sem precisar de conta.
+- Supabase: coluna `role` em `tasks_shares`; novas tabelas `tasks_comments`, `tasks_comment_threads` e `tasks_links`; funções `tasks_can_comment`, `tasks_link_info`, `tasks_link_public`, `tasks_link_join`. Tudo com RLS e testado na base de dados real.
+
 ## v0.4a — 2026-10-27
 - **Correção**: convidar dava "new row violates row-level security policy for table tasks_docs". A regra de leitura do Supabase não reconhecia o dono no momento em que o documento partilhado era criado. Já está corrigido e testado na base de dados real: criar, convidar, aceitar, ler e editar.
 - O botão de definições no topo passa a mostrar o **nome da conta** (ou o email, se não houver nome), com o ponto de estado da gravação (verde = guardado). Sem sessão iniciada mostra "Entrar".
