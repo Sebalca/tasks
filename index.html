@@ -398,7 +398,7 @@ dialog .close{margin-top:16px;float:right;color:var(--accent);font-weight:600;pa
 (()=>{
 'use strict';
 /* =========================================================
-   Checklist v0.3 — dados em localStorage.
+   Checklist v0.3a — dados em localStorage.
    Estrutura pronta para Supabase (user_site_data:
    site_id 'checklist', chave 'data', valor = objeto S).
    ========================================================= */
@@ -570,6 +570,7 @@ function applyTheme(){const th=S.settings.theme;if(th==='auto')delete document.d
 
 /* ---------- render ---------- */
 let visible=[];
+const doneOpen=new Set(); // concluídas começam sempre minimizadas
 function renderAll(){const p=curPage(),t=curTab();S.cur.page=p.id;S.cur.tab=t.id;
  if(S.cur.view==='todo'&&!collectTodo(p).length)delete S.cur.view;
  applyTheme();renderSide();renderDoc();lastSig=todoSig()}
@@ -665,7 +666,7 @@ function renderDone(){
    if(b.done)items.push({b,crumb:[head,...cr].filter(Boolean).join(' › ')});else w(b.children,d+1,[...cr,b.text||'…'])}})(t.blocks,0,[]);
  let n=0;items.forEach(({b})=>walk([b],x=>{if(x.type==='task'&&x.done)n++}));
  sec.hidden=!items.length;
- const closed=!!S.ui.doneClosed[t.id];sec.classList.toggle('closed',closed);
+ const closed=!doneOpen.has(t.id);sec.classList.toggle('closed',closed);
  $('#doneToggle').innerHTML=`<svg class="car" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg>${n} concluída${n===1?'':'s'}`;
  let last=null;
  items.forEach(({b,crumb})=>{
@@ -1057,7 +1058,7 @@ document.addEventListener('contextmenu',e=>{if(e.target.closest&&e.target.closes
 const DL=$('#doneList');
 DL.addEventListener('change',e=>{if(e.target.matches('.cb')){toggle(e.target.parentNode.dataset.id);renderAll();const id=e.target.parentNode.dataset.id;if(!locate(id).b.done)flash(id)}});
 DL.addEventListener('click',e=>{const m=e.target.closest('.more');if(m)blockMenu(m,m.parentNode.dataset.id)});
-$('#doneToggle').onclick=()=>{const t=curTab();S.ui.doneClosed[t.id]=!S.ui.doneClosed[t.id];save();renderDone()};
+$('#doneToggle').onclick=()=>{const t=curTab();if(doneOpen.has(t.id))doneOpen.delete(t.id);else doneOpen.add(t.id);renderDone()};
 $('#clearDone').onclick=()=>{const snap=snapshot();(function prune(arr){for(let i=arr.length-1;i>=0;i--){const b=arr[i];if(b.type==='task'&&b.done)arr.splice(i,1);else prune(b.children)}})(curTab().blocks);save();renderAll();toast('Concluídas apagadas',snap)};
 document.querySelector('.adders').onclick=e=>{const b=e.target.closest('[data-add]');if(b)addBlock(b.dataset.add)};
 

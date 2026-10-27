@@ -1,5 +1,8 @@
 # Checklist — PATCH NOTES
 
+## v0.3a — 2026-10-27
+- A zona **"Concluídas"** de cada secção começa sempre minimizada (como a caixa "Em curso"). Clicar no título abre/fecha.
+
 ## v0.3 — 2026-10-24
 - **Títulos movem o conteúdo**: arrastar um título (ou usar Alt+↑/↓, "Mover para cima/baixo" ou "Mover para outra secção") leva consigo tudo o que está por baixo, até ao próximo título do mesmo nível. Um título leva os subtítulos que tem por baixo; um subtítulo pára no título seguinte. As tarefas continuam a levar as subtarefas.
 - **Ctrl+clique na caixa** marca ou desmarca a tarefa como "em curso". Premir longo continua a funcionar, por exemplo no telemóvel.
