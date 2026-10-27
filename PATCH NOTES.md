@@ -1,5 +1,10 @@
 # Checklist — PATCH NOTES
 
+## v0.4a — 2026-10-27
+- **Correção**: convidar dava "new row violates row-level security policy for table tasks_docs". A regra de leitura do Supabase não reconhecia o dono no momento em que o documento partilhado era criado. Já está corrigido e testado na base de dados real: criar, convidar, aceitar, ler e editar.
+- O botão de definições no topo passa a mostrar o **nome da conta** (ou o email, se não houver nome), com o ponto de estado da gravação (verde = guardado). Sem sessão iniciada mostra "Entrar".
+- As definições têm um novo separador **Conta** (entrar, criar conta, sincronizar, terminar sessão), que substitui a janela de conta separada.
+
 ## v0.4 — 2026-10-27
 - **Partilha de páginas e secções** com outras contas da plataforma frisk.pt:
   - Menu ⋮ da página ou da secção → "Partilhar…" → email da conta + "Pode editar" ou "Pode ver". Só funciona com emails que já têm conta (avisa se não existir).
