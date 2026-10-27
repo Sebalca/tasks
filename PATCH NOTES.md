@@ -1,5 +1,8 @@
 # Checklist — PATCH NOTES
 
+## v0.5b — 2026-10-27
+- O painel de comentários volta a abrir por cima do documento, à direita, sem o mover nem encolher (anula a alteração de layout da v0.5a). Clicar fora continua a fechá-lo.
+
 ## v0.5a — 2026-10-27
 - Com o painel de comentários aberto, clicar fora dele fecha-o. Clicar no 💬 de outra linha muda diretamente para essa conversa.
 - Em ecrãs largos, o documento encolhe quando o painel de comentários está aberto, para o painel não tapar as linhas nem os botões 💬.
