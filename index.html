@@ -4,6 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Checklist</title>
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="/icon-192.png">
+<meta name="theme-color" content="#0b57d0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Tasks">
 <style>
 :root{--bg:#f0f2f5;--panel:#fff;--side:#f8fafd;--text:#1f1f1f;--muted:#5f6368;--line:#e1e4e8;--accent:#0b57d0;--accent-soft:#d3e3fd;--hover:#eef1f6;--danger:#c5221f;--shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.06);--I:28px;--HO:24px}
 :root[data-theme=dark]{--bg:#18191b;--panel:#202124;--side:#1d1e20;--text:#e8eaed;--muted:#9aa0a6;--line:#3c4043;--accent:#a8c7fa;--accent-soft:#2b3a55;--hover:#2a2b2e;--danger:#f28b82;--shadow:0 1px 3px rgba(0,0,0,.5);color-scheme:dark}
@@ -264,6 +270,20 @@ body.is-dragging,body.is-dragging *{cursor:grabbing!important;user-select:none}
 #viewer .row .txt{cursor:default}
 #viewer input.cb{pointer-events:none}
 #viewer .row.is-done .txt{text-decoration:line-through;color:var(--muted)}
+/* lembretes */
+.rbadge{flex:none;font-size:11.5px;font-weight:600;color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,transparent);border-radius:10px;padding:2px 8px;height:22px;display:flex;align-items:center;gap:3px;white-space:nowrap}
+.rbadge.late{color:var(--danger);background:color-mix(in srgb,var(--danger) 12%,transparent)}
+.rbadge:hover{filter:brightness(.95)}
+#remDlg{width:min(420px,calc(100vw - 24px))}
+.rem-q{font-size:13px;color:var(--muted);border-left:3px solid var(--accent);padding:3px 10px;margin:0 0 12px;white-space:pre-wrap;word-break:break-word;max-height:70px;overflow:auto}
+.rem-quick{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.rem-quick button{font-size:13px;padding:6px 10px;border-radius:14px;border:1px solid var(--line)}
+.rem-quick button:hover{background:var(--hover)}
+.rem-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:6px 0}
+.rem-row input,.rem-row select{font:inherit;color:var(--text);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:7px 9px}
+.rem-warn{font-size:13px;background:color-mix(in srgb,#f9ab00 16%,transparent);border-radius:8px;padding:8px 10px;margin:10px 0 0}
+.rem-warn button{margin-top:6px}
+.notif-box{border-top:1px solid var(--line);margin-top:16px;padding-top:12px}
 /* por fazer */
 .item.tab.todo{color:var(--danger);font-weight:600}
 .item.tab.todo .ico,.item.tab.todo .count{color:var(--danger)}
@@ -395,6 +415,8 @@ dialog .close{margin-top:16px;float:right;color:var(--accent);font-weight:600;pa
     <div class="acc-who" id="accWho"></div>
     <p class="hint" id="accState"></p>
     <div class="acc-btns"><button class="btn" id="accSync" type="button">Sincronizar agora</button><button class="btn danger" id="accOutBtn" type="button">Terminar sessão</button></div>
+    <div class="notif-box"><h4 style="margin:0 0 6px">🔔 Notificações de lembretes</h4><p class="hint" id="notifState" style="margin:0 0 8px"></p>
+      <div class="acc-btns" style="margin-top:0"><button class="btn pri" id="notifOn" type="button">Ativar neste dispositivo</button><button class="btn" id="notifTest" type="button">Enviar teste</button><button class="btn" id="notifOff" type="button">Desativar neste dispositivo</button></div></div>
   </div>
   <div id="accMsg"></div>
   </div>
@@ -445,6 +467,7 @@ dialog .close{margin-top:16px;float:right;color:var(--accent);font-weight:600;pa
     <tr><td>Barra lateral: arrastar</td><td>Mudar a ordem das páginas e secções (no telemóvel: premir e arrastar). Largar uma secção em cima de outra página move-a para lá.</td></tr>
     <tr><td>Arrastar para a direita</td><td>Largar mais à direita de uma tarefa cria subtarefa</td></tr>
     <tr><td>💬 ao lado da linha</td><td>Ver/escrever comentários (também no menu ⋮ → Comentar). <kbd>Ctrl</kbd>+<kbd>Enter</kbd> envia</td></tr>
+    <tr><td>⏰ Lembrete</td><td>Menu ⋮ da tarefa → “Lembrete…”: dia, hora e repetição. Recebes uma notificação (ativa-as em Definições → Conta)</td></tr>
     <tr class="grp"><td colspan="2">Selecionar várias linhas</td></tr>
     <tr><td>Arrastar o rato</td><td>Carregar numa linha e arrastar para outras seleciona-as</td></tr>
     <tr><td><kbd>Shift</kbd>+clique</td><td>Selecionar desde a linha atual até à linha clicada</td></tr>
@@ -487,6 +510,17 @@ dialog .close{margin-top:16px;float:right;color:var(--accent);font-weight:600;pa
   <button class="btn" id="cfLocal">Usar as deste dispositivo<small>Substitui as que estão na conta.</small></button>
   <button class="btn" id="cfLater">Decidir depois<small>Fica tudo como está e não sincroniza até decidires.</small></button>
 </dialog>
+<dialog id="remDlg">
+  <h3>⏰ Lembrete</h3>
+  <div class="rem-q" id="remQ"></div>
+  <div class="rem-quick" id="remQuick">
+    <button data-q="1h">Daqui a 1 hora</button><button data-q="18">Hoje às 18h</button><button data-q="tm9">Amanhã às 9h</button><button data-q="mon9">Próxima segunda às 9h</button>
+  </div>
+  <div class="rem-row"><input type="date" id="remDate" required><input type="time" id="remTime" required step="300"></div>
+  <div class="rem-row"><select id="remRep"><option value="none">Não repetir</option><option value="daily">Todos os dias</option><option value="weekly">Todas as semanas</option><option value="monthly">Todos os meses</option></select></div>
+  <div class="rem-warn" id="remWarn" hidden></div>
+  <div class="dlg-btns"><button id="remDel" style="color:var(--danger);margin-right:auto">Remover</button><button onclick="this.closest('dialog').close()">Cancelar</button><button id="remSave">Guardar</button></div>
+</dialog>
 <dialog id="tabTodo">
   <h3>“Por fazer” nesta secção</h3>
   <div class="radios">
@@ -503,7 +537,7 @@ dialog .close{margin-top:16px;float:right;color:var(--accent);font-weight:600;pa
 (()=>{
 'use strict';
 /* =========================================================
-   Checklist v0.6 — dados em localStorage.
+   Checklist v0.7 — dados em localStorage.
    Estrutura pronta para Supabase (user_site_data:
    site_id 'checklist', chave 'data', valor = objeto S).
    ========================================================= */
@@ -731,6 +765,7 @@ function rowEl(b,depth,doneView){
  else{tx.contentEditable=RO?'false':'true';tx.dataset.ph=b.type==='h1'?'Título':b.type==='h2'?'Subtítulo':'Tarefa'}
  r.append(tx);
  if(doneView&&b.done&&b.doneAt){const w=el('span','when');w.textContent=fmtDate(b.doneAt);w.title='Concluída em '+new Date(b.doneAt).toLocaleString('pt-PT');r.append(w)}
+ if(!doneView&&b.type==='task'){const rb=remBadge(b.id);if(rb)r.append(rb)}
  if(!doneView||b.done){const cb=commentBtn(b.id);if(cb)r.append(cb)}
  const m=el('button','more');m.innerHTML=ICON.more;m.title='Opções';r.append(m);
  return r;
@@ -849,6 +884,7 @@ function setType(id,type){
  b.type=type;save();renderAll();
 }
 function toggle(id){
+ setTimeout(()=>remOnToggle(id),0);
  if(roOf(id))return;
  const path=pathTo(id);if(!path)return;const b=path[path.length-1];const st=Date.now();const pg=curPage();const log=pg.doneLog=pg.doneLog||[];
  const unlog=ts=>{const i=log.lastIndexOf(ts);if(i>=0)log.splice(i,1)};
@@ -945,7 +981,9 @@ function blockMenu(anchor,id){
  if(b.done){menu(anchor,[...(canCommentCur()?[{label:'💬 Comentar…',fn:()=>openComments(id)}]:[]),{label:'Desmarcar (voltar à lista)',fn:()=>toggleUI(id)},...colorItems(b,id),{label:'Duplicar',fn:()=>duplicate(id)},'-',{label:'Apagar',danger:1,fn:()=>deleteUI(id)}]);return}
  const types={task:'Tarefa',h1:'Título',h2:'Subtítulo'};
  const items=[];
- if(canCommentCur())items.push({label:'💬 Comentar…',fn:()=>openComments(id)},'-');
+ if(canCommentCur())items.push({label:'💬 Comentar…',fn:()=>openComments(id)});
+ if(b.type==='task')items.push({label:REM.has(id)?'⏰ Editar lembrete…':'⏰ Lembrete…',fn:()=>openRem(id)});
+ items.push('-');
  if(b.type==='task'){
   items.push({label:'Marcar como concluída',fn:()=>toggleUI(id)});
   items.push({label:b.working?'Tirar de “em curso”':'Marcar como em curso',fn:()=>toggleWorking(id)});
@@ -1272,6 +1310,7 @@ function refreshSettings(){const st=S.settings;
  document.querySelectorAll('#themeSeg button').forEach(b=>b.classList.toggle('on',b.dataset.v===st.theme));
  $('#todoOpts').classList.toggle('off',!st.todo.enabled)}
 function openSettings(pane){
+ setTimeout(renderNotif,50);
  const st=S.settings;$('#todoOn').checked=st.todo.enabled;$('#todoVal').value=st.todo.value;$('#todoMode').value=st.todo.mode;
  refreshSettings();renderAcc();setPane(typeof pane==='string'?pane:'geral');closeSideMobile();if(!$('#settings').open)$('#settings').showModal();
 }
@@ -1461,7 +1500,7 @@ function renderAcc(){
  if(on){$('#accWho').textContent=accName?`${accName} (${USER.email})`:USER.email;
   $('#accState').textContent={ok:'As tarefas estão guardadas na conta'+(meta.at?' (última gravação: '+fmtDate(Date.parse(meta.at))+').':'.'),saving:'A guardar alterações…',error:'Não foi possível guardar. Vai tentar de novo automaticamente.',offline:'Sem ligação à internet. As alterações ficam neste dispositivo e são enviadas quando voltar a ligação.',conflict:'Há uma diferença por resolver entre a conta e este dispositivo. Carrega em “Sincronizar agora”.'}[cloudState]||''}
 }
-function openAcc(){$('#accMsg').textContent='';$('#accMsg').className='';openSettings('conta');if(!USER)setTimeout(()=>$('#accEmail').focus(),50)}
+function openAcc(){setTimeout(renderNotif,50);$('#accMsg').textContent='';$('#accMsg').className='';openSettings('conta');if(!USER)setTimeout(()=>$('#accEmail').focus(),50)}
 function accMsg(t,err){const m=$('#accMsg');m.textContent=t;m.className=err?'err':''}
 function trErr(e){const m=(e&&e.message)||String(e);
  if(/Invalid login credentials/i.test(m))return'Email ou password errados.';
@@ -1491,7 +1530,7 @@ $('#accOutBtn').onclick=async()=>{
 function onUser(u){
  const prev=USER&&USER.id;USER=u||null;
  if(!USER){accName='';setCloud('off');return}
- if(prev!==USER.id){setCloud('saving');sync();startShare();if(PEND_LINK)setTimeout(checkLink,1200)}
+ if(prev!==USER.id){setCloud('saving');sync();startShare();setTimeout(loadRem,800);if(PEND_LINK)setTimeout(checkLink,1200)}
  if(USER)loadName();else accName='';
  if(accOpen()){renderAcc();if(USER&&prev!==USER.id)setTimeout(()=>{if(USER&&accOpen()&&cloudState!=='conflict')$('#settings').close()},800)}
 }
@@ -1505,7 +1544,7 @@ async function initCloud(){
   onUser(session&&session.user);
  });
  try{const ss=await Auth.getSession();onUser(ss&&ss.user)}catch(e){setCloud('off')}
- checkLink();
+ checkLink();remHash();
 }
 addEventListener('online',()=>{if(USER)sync()});
 addEventListener('offline',()=>{if(USER)setCloud('offline')});
@@ -1793,6 +1832,105 @@ async function renderLink(){
 }
 function markShared(id){const d=DOCS.get(id);if(d){d.shared=true;renderSide()}}
 var PEND_LINK=null;
+/* =========================================================
+   LEMBRETES (tasks_reminders + Web Push via edge function tasks-push)
+   ========================================================= */
+var REM=new Map(),REM_ID=null,SWREG=null;
+const FN_URL='https://aehitgqsfcpzuunyzpsh.supabase.co/functions/v1/tasks-push';
+const pushOK=()=>'serviceWorker' in navigator&&'PushManager' in window&&'Notification' in window;
+const isIOS=()=>/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+const standalone=()=>matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+function fmtShort(ts){const d=new Date(ts),n=new Date(),z=x=>String(x).padStart(2,'0');const hm=`${z(d.getHours())}:${z(d.getMinutes())}`;
+ const same=(a,b)=>a.toDateString()===b.toDateString();const tm=new Date(n);tm.setDate(n.getDate()+1);
+ if(same(d,n))return 'Hoje '+hm;if(same(d,tm))return 'Amanhã '+hm;return `${z(d.getDate())}/${z(d.getMonth()+1)}${d.getFullYear()!==n.getFullYear()?'/'+d.getFullYear():''} ${hm}`}
+function remBadge(bid){
+ const r=REM.get(bid);if(!r||(r.fired_at&&r.repeat==='none'))return null;
+ const late=Date.parse(r.remind_at)<Date.now();const b=el('button','rbadge'+(late?' late':''));b.dataset.r=bid;
+ b.textContent='⏰ '+fmtShort(r.remind_at)+(r.repeat!=='none'?' 🔁':'');b.title='Lembrete: '+new Date(r.remind_at).toLocaleString('pt-PT')+({daily:' · todos os dias',weekly:' · todas as semanas',monthly:' · todos os meses'}[r.repeat]||'');return b;
+}
+function refreshRemBadges(){document.querySelectorAll('#blocks .row').forEach(r=>{const o=r.querySelector('.rbadge');if(o)o.remove();const L=locate(r.dataset.id);if(!L||L.b.type!=='task')return;const b=remBadge(r.dataset.id);if(b)r.insertBefore(b,r.querySelector('.cbtn')||r.querySelector('.more'))})}
+async function loadRem(){if(!USER||!SB)return;const r=await SB.from('tasks_reminders').select('id,block_id,page_id,tab_id,text,remind_at,repeat,fired_at').eq('user_id',USER.id);if(r.error)return;
+ REM=new Map((r.data||[]).map(x=>[x.block_id,x]));refreshRemBadges();remHash()}
+function findBlock(bid){for(const p of S.pages)for(const t of p.tabs){const L=locate(bid,t.blocks);if(L)return{p,t,b:L.b}}return null}
+const z2=x=>String(x).padStart(2,'0');
+function setRemInputs(d){$('#remDate').value=`${d.getFullYear()}-${z2(d.getMonth()+1)}-${z2(d.getDate())}`;$('#remTime').value=`${z2(d.getHours())}:${z2(d.getMinutes())}`}
+async function remWarn(){
+ const w=$('#remWarn');w.hidden=true;w.innerHTML='';
+ if(!pushOK()){w.hidden=false;w.textContent=isIOS()&&!standalone()?'No iPhone/iPad, as notificações só funcionam depois de adicionares o Tasks ao ecrã principal (Partilhar → Adicionar ao ecrã principal) e abrires a partir daí.':'Este browser não suporta notificações push. O lembrete fica guardado e aparece noutros dispositivos com notificações ativas.';return}
+ const sub=await getSub();if(sub&&Notification.permission==='granted')return;
+ w.hidden=false;w.innerHTML='As notificações ainda não estão ativas neste dispositivo.<br>';const b=el('button','btn pri');b.textContent='Ativar notificações';b.onclick=async()=>{await enablePush();remWarn()};w.append(b);
+}
+function openRem(bid){
+ if(!USER){toast('Entra na tua conta para criares lembretes');openAcc();return}
+ const L=locate(bid);if(!L)return;REM_ID=bid;const r=REM.get(bid);
+ $('#remQ').textContent=L.b.text||'(sem texto)';
+ const d=r&&!(r.fired_at&&r.repeat==='none')?new Date(r.remind_at):(()=>{const x=new Date(Date.now()+3600e3);x.setMinutes(Math.ceil(x.getMinutes()/5)*5,0,0);return x})();
+ setRemInputs(d);$('#remRep').value=r?r.repeat:'none';$('#remDel').hidden=!r;closeMenu();$('#remDlg').showModal();remWarn();
+}
+$('#remQuick').onclick=e=>{const q=e.target.closest('button');if(!q)return;const d=new Date();
+ if(q.dataset.q==='1h'){d.setTime(Date.now()+3600e3);d.setSeconds(0,0)}
+ else if(q.dataset.q==='18'){d.setHours(18,0,0,0);if(d<new Date())d.setDate(d.getDate()+1)}
+ else if(q.dataset.q==='tm9'){d.setDate(d.getDate()+1);d.setHours(9,0,0,0)}
+ else if(q.dataset.q==='mon9'){const k=(8-d.getDay())%7||7;d.setDate(d.getDate()+k);d.setHours(9,0,0,0)}
+ setRemInputs(d)};
+$('#remSave').onclick=async()=>{
+ const ds=$('#remDate').value,ts=$('#remTime').value;if(!ds||!ts){toast('Escolhe o dia e a hora');return}
+ const at=new Date(ds+'T'+ts);if(isNaN(at)){toast('Data inválida');return}
+ const rep=$('#remRep').value;if(at<new Date()&&rep==='none'){toast('Essa hora já passou');return}
+ const f=findBlock(REM_ID);if(!f)return;
+ const row={user_id:USER.id,block_id:REM_ID,page_id:f.p.id,tab_id:f.t.id,text:(f.b.text||'').slice(0,500),remind_at:at.toISOString(),repeat:rep,fired_at:null,updated_at:new Date().toISOString()};
+ const r=await SB.from('tasks_reminders').upsert(row,{onConflict:'user_id,block_id'}).select('id,block_id,page_id,tab_id,text,remind_at,repeat,fired_at').single();
+ if(r.error){toast('Erro: '+r.error.message);return}
+ REM.set(REM_ID,r.data);$('#remDlg').close();refreshRemBadges();toast('Lembrete: '+fmtShort(r.data.remind_at));
+ if(pushOK()&&Notification.permission!=='granted')enablePush();
+};
+$('#remDel').onclick=async()=>{const r=REM.get(REM_ID);if(!r)return;const x=await SB.from('tasks_reminders').delete().eq('id',r.id);if(x.error){toast('Erro: '+x.error.message);return}REM.delete(REM_ID);$('#remDlg').close();refreshRemBadges();toast('Lembrete removido')};
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('.rbadge');if(b){e.preventDefault();e.stopPropagation();openRem(b.dataset.r)}},true);
+async function remOnToggle(bid){const r=REM.get(bid);if(!r||r.repeat!=='none'||!USER)return;const f=findBlock(bid);if(!f||!f.b.done)return;
+ await SB.from('tasks_reminders').delete().eq('id',r.id);REM.delete(bid)}
+
+/* ---- push: subscrição neste dispositivo ---- */
+function b64u(s){const p='='.repeat((4-s.length%4)%4);const b=atob((s+p).replace(/-/g,'+').replace(/_/g,'/'));return Uint8Array.from(b,c=>c.charCodeAt(0))}
+async function getSub(){if(!SWREG)return null;try{return await SWREG.pushManager.getSubscription()}catch(e){return null}}
+async function enablePush(){
+ if(!pushOK()){toast(isIOS()&&!standalone()?'No iPhone: adiciona primeiro o Tasks ao ecrã principal':'Este browser não suporta notificações');return false}
+ if(!USER){openAcc();return false}
+ try{
+  if(!SWREG)SWREG=await navigator.serviceWorker.register('/sw.js');await navigator.serviceWorker.ready;
+  const perm=await Notification.requestPermission();if(perm!=='granted'){toast('As notificações foram bloqueadas. Ativa-as nas definições do browser para este site.');renderNotif();return false}
+  const k=await fetch(FN_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:'{"action":"vapid"}'}).then(r=>r.json());
+  let sub=await getSub();if(!sub)sub=await SWREG.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64u(k.key)});
+  const j=sub.toJSON();const r=await SB.rpc('tasks_push_subscribe',{p_endpoint:j.endpoint,p_p256dh:j.keys.p256dh,p_auth:j.keys.auth,p_ua:navigator.userAgent});
+  if(r.error)throw r.error;toast('Notificações ativas neste dispositivo');renderNotif();return true;
+ }catch(e){toast('Não foi possível ativar: '+(e.message||e));renderNotif();return false}
+}
+async function disablePush(){const sub=await getSub();if(sub){const ep=sub.endpoint;try{await sub.unsubscribe()}catch(e){}if(USER)await SB.from('tasks_push_subs').delete().eq('endpoint',ep)}toast('Notificações desativadas neste dispositivo');renderNotif()}
+async function renderNotif(){
+ const st=$('#notifState');if(!st)return;const on=$('#notifOn'),off=$('#notifOff'),te=$('#notifTest');
+ if(!pushOK()){st.textContent=isIOS()&&!standalone()?'No iPhone/iPad: abre o Tasks no Safari → Partilhar → “Adicionar ao ecrã principal”, abre-o a partir do ícone e ativa aqui.':'Este browser não suporta notificações push.';on.hidden=off.hidden=te.hidden=true;return}
+ const sub=await getSub();const active=!!sub&&Notification.permission==='granted';
+ st.textContent=Notification.permission==='denied'?'Bloqueadas neste browser. Ativa as notificações nas definições do site (cadeado na barra de endereço).':active?'Ativas neste dispositivo. Recebes os lembretes mesmo com o Tasks fechado.':'Desativadas neste dispositivo.';
+ on.hidden=active||Notification.permission==='denied';off.hidden=!active;te.hidden=!active;
+}
+$('#notifOn').onclick=()=>enablePush();$('#notifOff').onclick=()=>disablePush();
+$('#notifTest').onclick=async()=>{const r=await SB.functions.invoke('tasks-push',{body:{action:'test'}});if(r.error)toast('Erro: '+r.error.message);else toast(r.data&&r.data.ok?'Teste enviado ('+r.data.ok+' dispositivo'+(r.data.ok===1?'':'s')+')':'Nenhum dispositivo com notificações ativas')};
+
+/* ---- abrir a partir da notificação ---- */
+var REM_ACT=null;
+function remHash(){
+ const m=location.hash.match(/[#&]r=([0-9a-f-]{36})(?:&a=(done|open))?/);if(m){REM_ACT={id:m[1],action:m[2]||'open'};history.replaceState(null,'',location.pathname+location.search)}
+ if(!REM_ACT||!REM.size)return;const a=REM_ACT;const r=[...REM.values()].find(x=>x.id===a.id);if(!r)return;REM_ACT=null;
+ const f=findBlock(r.block_id);if(!f){toast('A tarefa deste lembrete já não existe');return}
+ S.cur={page:f.p.id,tab:f.t.id};renderAll();
+ if(a.action==='done'&&!f.b.done){toggle(r.block_id);renderAll();toast('Tarefa concluída: '+(f.b.text||'').slice(0,40))}else flash(r.block_id);
+}
+async function remInit(){
+ if(pushOK()){try{SWREG=await navigator.serviceWorker.register('/sw.js')}catch(e){}
+  navigator.serviceWorker.addEventListener('message',e=>{const d=e.data||{};if(d.type==='reminder'){REM_ACT={id:d.id,action:d.action};if(REM.size)remHash();else loadRem()}})}
+ remHash();
+}
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&USER)loadRem()});
+
 async function checkLink(){
  const m=location.hash.match(/[#&]l=([A-Za-z0-9]{16,64})/);const tok=m?m[1]:PEND_LINK;if(!tok||!SB)return;
  const clear=()=>{PEND_LINK=null;if(m)history.replaceState(null,'',location.pathname+location.search)};
@@ -1839,6 +1977,7 @@ function startShare(){
 }
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&USER)scheduleShares()});
 
+remInit();
 initCloud();
 
 renderAll();

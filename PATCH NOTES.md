@@ -1,5 +1,17 @@
 # Checklist — PATCH NOTES
 
+## v0.7 — 2026-10-29
+- **Lembretes nas tarefas** (pessoais: cada conta tem os seus, mesmo em páginas partilhadas):
+  - Menu ⋮ da tarefa → "⏰ Lembrete…": dia e hora, atalhos (Daqui a 1 hora, Hoje às 18h, Amanhã às 9h, Próxima segunda às 9h) e repetição (todos os dias, todas as semanas, todos os meses).
+  - A tarefa mostra a etiqueta "⏰ Amanhã 09:00" (🔁 se repetir; a vermelho se já passou). Clicar na etiqueta permite editar ou remover o lembrete.
+  - Concluir uma tarefa com lembrete único apaga o lembrete.
+- **Notificações push**, mesmo com o site fechado:
+  - Ativam-se em Definições → Conta → "Notificações de lembretes" → "Ativar neste dispositivo". O botão "Enviar teste" confirma que estão a funcionar.
+  - A notificação tem os botões **Adiar 1 hora** e **Concluir**. Concluir abre o Tasks e marca a tarefa como feita; clicar na notificação abre a tarefa.
+  - No iPhone/iPad funcionam se o Tasks for adicionado ao ecrã principal (Safari → Partilhar → Adicionar ao ecrã principal) e aberto a partir daí.
+- O site passa a poder ser instalado como app (manifest + ícones + service worker `sw.js`).
+- Supabase: tabelas `tasks_reminders` e `tasks_push_subs` (RLS por conta), função `tasks_push_subscribe`, Edge Function `tasks-push` (envio Web Push com chaves VAPID guardadas no Vault, adiar a partir da notificação, notificação de teste) e tarefa agendada `tasks-lembretes` (pg_cron, todos os minutos).
+
 ## v0.6 — 2026-10-27
 - **Mudar a ordem das páginas e secções arrastando na barra lateral**. No computador basta clicar e arrastar; no telemóvel, premir um momento e depois arrastar. Uma linha azul mostra onde vai ficar.
   - As páginas reorganizam-se dentro do seu grupo ("as minhas" ou "Partilhadas comigo").
