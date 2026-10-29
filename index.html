@@ -537,7 +537,7 @@ dialog .close{margin-top:16px;float:right;color:var(--accent);font-weight:600;pa
 (()=>{
 'use strict';
 /* =========================================================
-   Checklist v0.7 — dados em localStorage.
+   Checklist v0.7a — dados em localStorage.
    Estrutura pronta para Supabase (user_site_data:
    site_id 'checklist', chave 'data', valor = objeto S).
    ========================================================= */
@@ -586,7 +586,7 @@ function fix(s){
  if(!Array.isArray(s.pages)||!s.pages.length)s.pages=demo().pages;
  s.pages.forEach(p=>{p.id=p.id||uid();p.title=p.title??'Página';if(!Array.isArray(p.tabs)||!p.tabs.length)p.tabs=p._doc?[{id:'ph-'+p._doc,title:'A carregar…',blocks:[],_ph:true}]:[{id:uid(),title:'Secção 1',blocks:[]}];
   p.doneLog=Array.isArray(p.doneLog)?p.doneLog:[];
-  p.tabs.forEach(t=>{t.id=t.id||uid();t.title=t.title??'Secção';t.blocks=Array.isArray(t.blocks)?t.blocks:[];walk(t.blocks,b=>{b.id=b.id||uid();b.type=b.type||'task';b.text=b.text||'';b.children=Array.isArray(b.children)?b.children:[];if(!b.createdAt&&b.text.trim())b.createdAt=now})})});
+  p.tabs.forEach(t=>{t.id=t.id||uid();t.title=t.title??'Secção';if(t._doc&&!Array.isArray(t.blocks))t._ph=true;t.blocks=Array.isArray(t.blocks)?t.blocks:[];walk(t.blocks,b=>{b.id=b.id||uid();b.type=b.type||'task';b.text=b.text||'';b.children=Array.isArray(b.children)?b.children:[];if(!b.createdAt&&b.text.trim())b.createdAt=now})})});
  return s;
 }
 function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&Array.isArray(s.pages)&&s.pages.length)return fix(s)}catch(e){}return fix(demo())}
@@ -1468,6 +1468,8 @@ async function push(force){
 function applyRemote(valor,updatedAt){
  applying=true;
  const keep={cur:S.cur,ui:S.ui};const v=JSON.parse(JSON.stringify(valor));const rev=v.rev||1;delete v.rev;
+ // o conteúdo das páginas/secções partilhadas vem sempre de tasks_docs, nunca da cópia pessoal
+ (v.pages||[]).forEach(p=>{if(p._doc)delete p.tabs;else (p.tabs||[]).forEach(t=>{if(t._doc)delete t.blocks})});
  S=fix(Object.assign(v,keep));
  meta.uid=USER.id;meta.rev=rev;meta.hash=curHash();meta.at=updatedAt;saveMeta();
  mountAll();saveNow();histReset();renderAll();applying=false;setCloud('ok');
@@ -1622,18 +1624,21 @@ function merge3(kind,B,L,R){
 }
 
 /* ---- sincronização de cada documento ---- */
+function noText(js){let n=0;JSON.stringify(JSON.parse(js).tabs||JSON.parse(js).blocks||[]).replace(/"text":"([^"]*)"/g,(m,t)=>{if(t.trim())n++});return n===0}
 function docsChanged(){
- if(!USER||applying)return;let reverted=false;
+ if(!USER||applying)return;let reverted=false,roRev=false;
  DOCS.forEach((d,id)=>{
   const f=findDoc(id);
   if(!f){if(d.own&&d.base&&!d.deleting){d.deleting=true;setTimeout(()=>{if(!findDoc(id))deleteDoc(id);else d.deleting=false},1500)}return}
   if(hasPh(f.obj))return;
-  const cur=JSON.stringify(docData(f.obj,d.kind));d.cur=cur;
+  const cur=JSON.stringify(docData(f.obj,d.kind));
+  if(cur!==d.base&&d.base&&noText(cur)&&!noText(d.base)){placeDoc(id,JSON.parse(d.base));reverted=true;return} // proteção: nunca substituir conteúdo por uma cópia vazia
+  d.cur=cur;
   if(cur===d.base)return;
-  if(!d.canEdit){placeDoc(id,JSON.parse(d.base));reverted=true;return}
+  if(!d.canEdit){placeDoc(id,JSON.parse(d.base));reverted=true;roRev=true;return}
   clearTimeout(d.t);d.t=setTimeout(()=>pushDoc(id),500);
  });
- if(reverted){fix(S);renderAll();toast('Esta partilha é só de leitura')}
+ if(reverted){fix(S);renderAll();if(roRev)toast('Esta partilha é só de leitura')}
 }
 async function pushDoc(id){
  const d=DOCS.get(id);if(!d||!USER)return;if(d.busy){clearTimeout(d.t);d.t=setTimeout(()=>pushDoc(id),400);return}

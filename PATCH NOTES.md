@@ -1,5 +1,11 @@
 # Checklist — PATCH NOTES
 
+## v0.7a — 2026-10-29
+- **Correção importante (perda de dados em páginas partilhadas)**: quando a cópia pessoal na conta trazia uma página ou secção partilhada com conteúdo vazio (por exemplo, gravada por um separador com uma versão antiga do site aberta), o site podia mostrar só "Secção 1" e, a seguir, gravar esse conteúdo vazio por cima da página partilhada.
+  - O conteúdo das páginas e secções partilhadas passa a vir sempre da tabela partilhada (`tasks_docs`), nunca da cópia pessoal.
+  - Nova proteção: o site nunca substitui uma página ou secção partilhada com texto por uma versão completamente vazia. Em vez disso, repõe o conteúdo guardado.
+- Foi guardada uma cópia de segurança da página "Discovercasa" (HUB, HUB Later, Features) no Vault do Supabase (`backup_discovercasa_2026_10_29`).
+
 ## v0.7 — 2026-10-29
 - **Lembretes nas tarefas** (pessoais: cada conta tem os seus, mesmo em páginas partilhadas):
   - Menu ⋮ da tarefa → "⏰ Lembrete…": dia e hora, atalhos (Daqui a 1 hora, Hoje às 18h, Amanhã às 9h, Próxima segunda às 9h) e repetição (todos os dias, todas as semanas, todos os meses).
