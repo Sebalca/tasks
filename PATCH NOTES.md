@@ -1,5 +1,17 @@
 # Checklist — PATCH NOTES
 
+## v0.9 — 2026-10-30
+- **Links colados mostram o título da página**, como no Google Docs/Chrome. Por exemplo, colar `https://girart.eu` dá "Art Workshops in Cascais | Girart.eu", a azul e clicável, dentro do texto da tarefa.
+  - Se tiveres texto selecionado ao colar, esse texto passa a ser o link.
+  - Clicar no link mostra Abrir, Copiar link, Mudar o texto e Remover link. Ctrl+clique abre-o diretamente.
+  - Se a página não tiver título acessível, mostra o endereço curto (ex.: "site.pt/pagina").
+- **Imagens coladas** (Ctrl+V) ou arrastadas para a página ficam numa linha própria entre as tarefas, a seguir à linha onde estavas.
+  - São reduzidas automaticamente (máx. 1600 px, WebP) e guardadas na conta. Aparecem em todos os dispositivos e para quem tem a página partilhada.
+  - Clicar na imagem abre-a em grande.
+  - No menu ⋮ escolhe-se o tamanho (Pequena, Média, Largura total); também dá para mover, comentar, copiar o link ou apagar.
+  - Move-se com a pega ⠿ e apaga-se como uma linha normal; Ctrl+Z também funciona.
+- Supabase: bucket público `tasks-images` (cada conta só carrega e apaga na sua pasta) e Edge Function `tasks-linkinfo` (lê o título das páginas, com bloqueio de endereços internos).
+
 ## v0.8 — 2026-10-30
 - **Sem sessão iniciada, o browser deixa de mostrar as páginas da conta**:
   - Ao abrir o site, se os dados guardados no browser forem de uma conta, aparece "A verificar a sessão…" até a sessão ser confirmada. Só depois as páginas são mostradas.
