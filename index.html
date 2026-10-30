@@ -537,7 +537,7 @@ dialog .close{margin-top:16px;float:right;color:var(--accent);font-weight:600;pa
 (()=>{
 'use strict';
 /* =========================================================
-   Checklist v0.7a — dados em localStorage.
+   Checklist v0.7b — dados em localStorage.
    Estrutura pronta para Supabase (user_site_data:
    site_id 'checklist', chave 'data', valor = objeto S).
    ========================================================= */
@@ -1525,7 +1525,7 @@ $('#accSync').onclick=()=>{if(blocked){blocked=false}sync()};
 $('#accOutBtn').onclick=async()=>{
  if(!confirm('Terminar sessão?\n\nAs tarefas ficam guardadas na conta e são removidas deste dispositivo. A sessão termina em todos os sites frisk.pt neste browser.'))return;
  if(isDirty()&&!blocked){clearTimeout(syncT);await push();if(isDirty()&&!confirm('Há alterações que ainda não foram guardadas na conta e vão perder-se. Continuar?'))return}
- try{await Auth.signOut()}catch(e){}
+ try{localStorage.removeItem(RTK)}catch(e){}try{await Auth.signOut()}catch(e){}
  window.__leaving=true;try{localStorage.removeItem(KEY);localStorage.removeItem(META);localStorage.removeItem(KEY+'.docs')}catch(e){}
  removeEventListener('beforeunload',saveNow);location.reload();
 };
@@ -1537,15 +1537,22 @@ function onUser(u){
  if(accOpen()){renderAcc();if(USER&&prev!==USER.id)setTimeout(()=>{if(USER&&accOpen()&&cloudState!=='conflict')$('#settings').close()},800)}
 }
 function loadScript(src){return new Promise((ok,ko)=>{const x=document.createElement('script');x.src=src;x.onload=ok;x.onerror=ko;document.head.append(x)})}
+const RTK=KEY+'.rt';
 async function initCloud(){
  try{if(!window.supabase)await loadScript(SB_JS);if(!window.Auth)await loadScript(AUTH_JS)}catch(e){setCloud('offline');return}
  if(!window.Auth||!window.plataforma){setCloud('offline');return}
  SB=window.plataforma;
  Auth.onChange(async(ev,session)=>{
   if(ev==='PASSWORD_RECOVERY'){const np=prompt('Escreve a nova password (mínimo 6 caracteres):');if(np&&np.length>=6){const {error}=await SB.auth.updateUser({password:np});toast(error?trErr(error):'Password alterada')}}
+  // cópia do refresh token: mantém a sessão mesmo que o browser apague os cookies (ex.: Safari ao fim de 7 dias)
+  try{if(session&&session.refresh_token)localStorage.setItem(RTK,session.refresh_token);else if(ev==='SIGNED_OUT')localStorage.removeItem(RTK)}catch(e){}
   onUser(session&&session.user);
  });
- try{const ss=await Auth.getSession();onUser(ss&&ss.user)}catch(e){setCloud('off')}
+ let ss=null;try{ss=await Auth.getSession()}catch(e){}
+ if(!ss){let rt=null;try{rt=localStorage.getItem(RTK)}catch(e){}
+  if(rt){try{const r=await SB.auth.refreshSession({refresh_token:rt});ss=r&&r.data&&r.data.session;if(!ss)localStorage.removeItem(RTK)}catch(e){}}}
+ else{try{localStorage.setItem(RTK,ss.refresh_token)}catch(e){}}
+ onUser(ss&&ss.user);if(!ss)setCloud('off');
  checkLink();remHash();
 }
 addEventListener('online',()=>{if(USER)sync()});

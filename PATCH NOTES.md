@@ -1,5 +1,8 @@
 # Checklist — PATCH NOTES
 
+## v0.7b — 2026-10-30
+- **Sessão mantém-se iniciada até fazeres "Terminar sessão"**: o site guarda também uma cópia da chave de renovação da sessão no próprio browser. Se o browser apagar os cookies (o Safari/iPhone apaga-os ao fim de 7 dias), o site volta a entrar sozinho. Ao terminar sessão, a cópia é apagada.
+
 ## v0.7a — 2026-10-29
 - **Correção importante (perda de dados em páginas partilhadas)**: quando a cópia pessoal na conta trazia uma página ou secção partilhada com conteúdo vazio (por exemplo, gravada por um separador com uma versão antiga do site aberta), o site podia mostrar só "Secção 1" e, a seguir, gravar esse conteúdo vazio por cima da página partilhada.
   - O conteúdo das páginas e secções partilhadas passa a vir sempre da tabela partilhada (`tasks_docs`), nunca da cópia pessoal.
