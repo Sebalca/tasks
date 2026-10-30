@@ -1,5 +1,12 @@
 # Checklist — PATCH NOTES
 
+## v0.8 — 2026-10-30
+- **Sem sessão iniciada, o browser deixa de mostrar as páginas da conta**:
+  - Ao abrir o site, se os dados guardados no browser forem de uma conta, aparece "A verificar a sessão…" até a sessão ser confirmada. Só depois as páginas são mostradas.
+  - Se a sessão terminou (por "Terminar sessão", por ter expirado ou por ter sido terminada noutro site frisk.pt), as páginas da conta são apagadas deste browser e aparece uma página vazia. Os dados continuam na conta.
+  - Se havia alterações ainda por enviar quando a sessão terminou sozinha, ficam guardadas à parte e só são enviadas quando essa mesma conta voltar a entrar.
+  - Sem internet: as páginas só aparecem se a sessão não tiver sido terminada neste browser.
+
 ## v0.7b — 2026-10-30
 - **Sessão mantém-se iniciada até fazeres "Terminar sessão"**: o site guarda também uma cópia da chave de renovação da sessão no próprio browser. Se o browser apagar os cookies (o Safari/iPhone apaga-os ao fim de 7 dias), o site volta a entrar sozinho. Ao terminar sessão, a cópia é apagada.
 

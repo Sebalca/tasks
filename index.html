@@ -284,6 +284,10 @@ body.is-dragging,body.is-dragging *{cursor:grabbing!important;user-select:none}
 .rem-warn{font-size:13px;background:color-mix(in srgb,#f9ab00 16%,transparent);border-radius:8px;padding:8px 10px;margin:10px 0 0}
 .rem-warn button{margin-top:6px}
 .notif-box{border-top:1px solid var(--line);margin-top:16px;padding-top:12px}
+/* sessão a verificar / sem sessão */
+#lockMsg{display:none;text-align:center;color:var(--muted);padding:60px 10px;font-size:15px}
+body.locked #lockMsg{display:block}
+body.locked #pages,body.locked .doc>*:not(#lockMsg),body.locked #pageTitle,body.locked #wip{visibility:hidden}
 /* por fazer */
 .item.tab.todo{color:var(--danger);font-weight:600}
 .item.tab.todo .ico,.item.tab.todo .count{color:var(--danger)}
@@ -367,7 +371,7 @@ dialog .close{margin-top:16px;float:right;color:var(--accent);font-weight:600;pa
     <button class="iconbtn" id="cloudBtn" data-s="off" title="Conta e definições"><span class="dot"></span><span class="lbl">Entrar</span><svg class="gear" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19.14 12.94c.04-.31.06-.63.06-.94s-.02-.63-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96a7 7 0 0 0-1.62-.94l-.36-2.54A.48.48 0 0 0 13.92 2h-3.84a.48.48 0 0 0-.48.41l-.36 2.54c-.59.24-1.13.56-1.62.94l-2.39-.96a.48.48 0 0 0-.59.22L2.72 8.47a.47.47 0 0 0 .12.61l2.03 1.58c-.05.31-.07.63-.07.94s.02.63.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.47.47 0 0 0-.12-.61zM12 15.6A3.6 3.6 0 1 1 15.6 12 3.6 3.6 0 0 1 12 15.6z"/></svg></button>
   </header>
   <div id="invBar" hidden><span id="invTxt"></span><button id="invOpen">Ver</button></div>
-  <div class="doc">
+  <div class="doc"><div id="lockMsg">A verificar a sessão…</div>
     <div id="roBar" class="ro-bar" hidden></div>
     <div id="wip" hidden><div class="wip-top"><button id="wipToggle" class="wip-h" title="Mostrar/esconder"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg><span>Em curso</span></button><button id="wipAll" title="Concluir todas as tarefas em curso desta página">Concluir todas</button></div><div id="wipList"></div></div>
     <div class="tt-row"><button id="tabIcon" class="emo-btn" title="Mudar ícone" hidden></button><div id="tabTitle" class="tab-title" data-ph="Nome da secção"></div></div>
@@ -537,7 +541,7 @@ dialog .close{margin-top:16px;float:right;color:var(--accent);font-weight:600;pa
 (()=>{
 'use strict';
 /* =========================================================
-   Checklist v0.7b — dados em localStorage.
+   Checklist v0.8 — dados em localStorage.
    Estrutura pronta para Supabase (user_site_data:
    site_id 'checklist', chave 'data', valor = objeto S).
    ========================================================= */
@@ -1418,6 +1422,8 @@ const SB_JS='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
 const AUTH_JS='https://cdn.jsdelivr.net/gh/Sebalca/plataforma-core@main/auth.js';
 var SB=null,USER=null,syncT=null,busy=false,applying=false,cloudState="off",blocked=false;
 var meta=(()=>{try{return JSON.parse(localStorage.getItem(META))||{}}catch(e){return{}}})();
+if(meta.uid)document.body.classList.add('locked');
+function unlock(){document.body.classList.remove('locked')}
 function saveMeta(){try{localStorage.setItem(META,JSON.stringify(meta))}catch(e){}}
 function payload(){const o={};for(const k in S)if(k!=='cur'&&k!=='ui')o[k]=S[k];
  o.pages=S.pages.filter(p=>!p._recv).map(p=>p._doc?{id:p.id,_doc:p._doc,title:p.title,icon:p.icon}:(p.tabs.some(t=>t._doc)?Object.assign({},p,{tabs:p.tabs.map(t=>t._doc?{id:t.id,_doc:t._doc,title:t.title,icon:t.icon}:t)}):p));
@@ -1433,7 +1439,7 @@ async function loadName(){if(!USER||!SB)return;try{const r=await SB.from('profil
 function setCloud(st,msg){
  cloudState=st;const b=$('#cloudBtn');b.dataset.s=st;
  const lbl={off:'Entrar',ok:'Guardado',saving:'A guardar…',error:'Erro ao guardar',offline:'Sem ligação',conflict:'Por decidir'}[st]||'';
- b.querySelector('.lbl').textContent=USER?(accName||USER.email):'Entrar';
+ b.querySelector('.lbl').textContent=USER?(accName||USER.email):st==='offline'?'Sem ligação':'Entrar';
  b.title=USER?`${accName?accName+' · ':''}${USER.email} — ${msg||lbl}\nClicar para abrir as definições`:'Entrar para guardar na conta';
  if(accOpen())renderAcc();
 }
@@ -1525,22 +1531,38 @@ $('#accSync').onclick=()=>{if(blocked){blocked=false}sync()};
 $('#accOutBtn').onclick=async()=>{
  if(!confirm('Terminar sessão?\n\nAs tarefas ficam guardadas na conta e são removidas deste dispositivo. A sessão termina em todos os sites frisk.pt neste browser.'))return;
  if(isDirty()&&!blocked){clearTimeout(syncT);await push();if(isDirty()&&!confirm('Há alterações que ainda não foram guardadas na conta e vão perder-se. Continuar?'))return}
- try{localStorage.removeItem(RTK)}catch(e){}try{await Auth.signOut()}catch(e){}
+ explicitOut=true;try{localStorage.removeItem(RTK)}catch(e){}try{await Auth.signOut()}catch(e){}
  window.__leaving=true;try{localStorage.removeItem(KEY);localStorage.removeItem(META);localStorage.removeItem(KEY+'.docs')}catch(e){}
  removeEventListener('beforeunload',saveNow);location.reload();
 };
+function emptyState(){const t={id:uid(),title:'Secção 1',blocks:[nb()]};const p={id:uid(),title:'As minhas tarefas',tabs:[t],doneLog:[]};return fix({v:1,pages:[p],seeds:['financas-v1'],cur:{page:p.id,tab:t.id},ui:{doneClosed:{}},settings:S&&S.settings})}
+var explicitOut=false;
+function lockOut(){
+ // remove deste browser os dados da conta (se houver alterações por enviar, ficam guardadas à parte e só voltam com a mesma conta)
+ const uidWas=meta.uid;if(!uidWas)return;
+ try{if(!explicitOut&&isDirty())localStorage.setItem(KEY+'.pend.'+uidWas,JSON.stringify({S:payload(),rev:meta.rev}))}catch(e){}
+ applying=true;clearTimeout(syncT);
+ try{localStorage.removeItem(KEY);localStorage.removeItem(META);localStorage.removeItem(KEY+'.docs');localStorage.removeItem(RTK)}catch(e){}
+ meta={};DOCS.clear();COMM.clear();REM.clear();closeCP();if(chan&&SB){try{SB.removeChannel(chan)}catch(e){}chan=null}
+ S=emptyState();histReset();try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}meta.hash=curHash();saveMeta();
+ applying=false;renderAll();
+ if(!explicitOut)toast('Sessão terminada. Entra na tua conta para veres as tuas páginas.');
+}
+function restorePending(id){try{const k=KEY+'.pend.'+id;const p=JSON.parse(localStorage.getItem(k));if(!p)return;localStorage.removeItem(k);
+ const keep={cur:S.cur,ui:S.ui};S=fix(Object.assign(p.S,keep));meta.uid=id;meta.rev=p.rev||0;meta.hash='pend';saveMeta();renderAll()}catch(e){}}
 function onUser(u){
  const prev=USER&&USER.id;USER=u||null;
- if(!USER){accName='';setCloud('off');return}
- if(prev!==USER.id){setCloud('saving');sync();startShare();setTimeout(loadRem,800);if(PEND_LINK)setTimeout(checkLink,1200)}
+ if(!USER){accName='';if(meta.uid)lockOut();unlock();setCloud('off');return}
+ if(prev!==USER.id){if(meta.uid&&meta.uid!==USER.id){explicitOut=true;lockOut();explicitOut=false}restorePending(USER.id);unlock();setCloud('saving');sync();startShare();setTimeout(loadRem,800);if(PEND_LINK)setTimeout(checkLink,1200)}
  if(USER)loadName();else accName='';
  if(accOpen()){renderAcc();if(USER&&prev!==USER.id)setTimeout(()=>{if(USER&&accOpen()&&cloudState!=='conflict')$('#settings').close()},800)}
 }
 function loadScript(src){return new Promise((ok,ko)=>{const x=document.createElement('script');x.src=src;x.onload=ok;x.onerror=ko;document.head.append(x)})}
 const RTK=KEY+'.rt';
 async function initCloud(){
- try{if(!window.supabase)await loadScript(SB_JS);if(!window.Auth)await loadScript(AUTH_JS)}catch(e){setCloud('offline');return}
- if(!window.Auth||!window.plataforma){setCloud('offline');return}
+ const offline=()=>{let rt=null;try{rt=localStorage.getItem(RTK)}catch(e){}if(meta.uid&&!rt)lockOut();unlock();setCloud(meta.uid?'offline':'off')};
+ try{if(!window.supabase)await loadScript(SB_JS);if(!window.Auth)await loadScript(AUTH_JS)}catch(e){offline();return}
+ if(!window.Auth||!window.plataforma){offline();return}
  SB=window.plataforma;
  Auth.onChange(async(ev,session)=>{
   if(ev==='PASSWORD_RECOVERY'){const np=prompt('Escreve a nova password (mínimo 6 caracteres):');if(np&&np.length>=6){const {error}=await SB.auth.updateUser({password:np});toast(error?trErr(error):'Password alterada')}}
