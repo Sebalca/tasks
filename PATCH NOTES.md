@@ -1,5 +1,21 @@
 # Checklist — PATCH NOTES
 
+## v0.10 — 2026-10-31
+- **Atalhos de navegação**:
+  - **Alt+1…9** abre a 1.ª…9.ª página, pela ordem da barra lateral (abre a pasta, se for preciso).
+  - **Alt+↑/↓** passa para a secção anterior/seguinte. No fim de uma página continua para a página anterior/seguinte. Funciona também enquanto se escreve.
+  - Mover uma tarefa para cima/baixo passa a ser **Ctrl+Shift+↑/↓** (ou Alt+Shift+↑/↓), como no Notion e no Google Docs.
+- **Modos de teclado**:
+  - Sem nada selecionado, **↑/↓ fazem scroll** da página.
+  - **Esc** entra no modo **linhas**: seleciona a primeira linha visível; ↑/↓ movem a seleção (com scroll automático), Shift+↑/↓ alarga, Enter edita, Ctrl+Shift+↑/↓ move a linha, Esc sai.
+  - **Ctrl+←** entra no modo **páginas** (barra lateral): ↑/↓ percorrem pastas, páginas e secções, Enter abre, ←/→ fecham e abrem pastas. **Ctrl+→** ou Esc voltam ao modo linhas.
+  - Uma pequena etiqueta no fundo do ecrã mostra o modo ativo e as teclas disponíveis.
+- **Pastas na barra lateral** (um nível):
+  - Um clique no **+** cria uma página; premir o + (ou botão direito) mostra "Nova página" e "Nova pasta".
+  - A pasta abre e fecha com um clique. As páginas entram arrastando-as para cima da pasta (ou pelo menu ⋮ da página → "Mover para pasta…") e saem arrastando-as para fora.
+  - Menu ⋮ da pasta: mudar nome, ícone, nova página nesta pasta, mover, apagar (as páginas ficam).
+- **Separadores dentro da página**: botão "+ Separador" ou escrever `---` numa linha vazia. Movem-se e apagam-se como as outras linhas.
+
 ## v0.9 — 2026-10-30
 - **Links colados mostram o título da página**, como no Google Docs/Chrome. Por exemplo, colar `https://girart.eu` dá "Art Workshops in Cascais | Girart.eu", a azul e clicável, dentro do texto da tarefa.
   - Se tiveres texto selecionado ao colar, esse texto passa a ser o link.
