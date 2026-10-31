@@ -1,5 +1,9 @@
 # Checklist — PATCH NOTES
 
+## v0.10a — 2026-10-31
+- Novo ícone ⌨ no topo, ao lado do botão da conta/definições, que abre diretamente os **Atalhos** (no computador; escondido no telemóvel).
+- A janela fica mais larga (até 860 px) quando está no separador Atalhos.
+
 ## v0.10 — 2026-10-31
 - **Atalhos de navegação**:
   - **Alt+1…9** abre a 1.ª…9.ª página, pela ordem da barra lateral (abre a pasta, se for preciso).
