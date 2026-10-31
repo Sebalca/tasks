@@ -161,6 +161,9 @@ body.is-dragging,body.is-dragging *{cursor:grabbing!important;user-select:none}
 #wip.closed #wipToggle svg{transform:rotate(-90deg)}
 #wip.closed #wipList{display:none}
 #wip.closed{padding-bottom:8px}
+#wipActs{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.wipb{font-size:12px;font-weight:600;color:var(--accent);border:1px solid color-mix(in srgb,var(--accent) 40%,transparent);border-radius:12px;padding:2px 10px}
+.wipb:hover{background:color-mix(in srgb,var(--accent) 12%,transparent)}
 #wipAll{font-size:12px;font-weight:600;color:var(--panel);background:var(--accent);border-radius:12px;padding:3px 12px}
 #wipAll:hover{filter:brightness(1.1)}
 .wip-h{font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--accent);margin-bottom:4px}
@@ -406,7 +409,7 @@ dialog .close{margin-top:16px;float:right;color:var(--accent);font-weight:600;pa
   <div id="invBar" hidden><span id="invTxt"></span><button id="invOpen">Ver</button></div>
   <div class="doc"><div id="lockMsg">A verificar a sessão…</div>
     <div id="roBar" class="ro-bar" hidden></div>
-    <div id="wip" hidden><div class="wip-top"><button id="wipToggle" class="wip-h" title="Mostrar/esconder"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg><span>Em curso</span></button><button id="wipAll" title="Concluir todas as tarefas em curso desta página">Concluir todas</button></div><div id="wipList"></div></div>
+    <div id="wip" hidden><div class="wip-top"><button id="wipToggle" class="wip-h" title="Mostrar/esconder"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg><span>Em curso</span></button><span id="wipActs"><button class="wipb" id="wipCopy" title="Copiar o texto de todas as tarefas em curso">Copiar todas</button><button class="wipb" id="wipPaint" title="Pintar todas as tarefas em curso">Pintar todas</button><button class="wipb" id="wipClear" title="Tirar todas de “em curso”">Desmarcar todas</button><button id="wipAll" title="Concluir todas as tarefas em curso desta página">Concluir todas</button></span></div><div id="wipList"></div></div>
     <div class="tt-row"><button id="tabIcon" class="emo-btn" title="Mudar ícone" hidden></button><div id="tabTitle" class="tab-title" data-ph="Nome da secção"></div></div>
     <div id="progress" class="progress"><div class="bar"><i></i></div><span></span></div>
     <div id="todoHint" class="todo-hint" hidden></div>
@@ -588,7 +591,7 @@ dialog .close{margin-top:16px;float:right;color:var(--accent);font-weight:600;pa
 (()=>{
 'use strict';
 /* =========================================================
-   Checklist v0.10a — dados em localStorage.
+   Checklist v0.10b — dados em localStorage.
    Estrutura pronta para Supabase (user_site_data:
    site_id 'checklist', chave 'data', valor = objeto S).
    ========================================================= */
@@ -1224,6 +1227,11 @@ TL.addEventListener('change',e=>{if(e.target.matches('.cb')){const id=e.target.p
 TL.addEventListener('click',e=>{const rp=e.target.closest('.repor');if(rp){reporTask(rp.parentNode.dataset.id);return}const m=e.target.closest('.more');if(m)todoMenu(m,m.parentNode.dataset.id)});
 var wipOpen=false;
 $('#wipToggle').onclick=()=>{wipOpen=!wipOpen;$('#wip').classList.toggle('closed',!wipOpen)};
+$('#wipCopy').onclick=()=>{const list=workingIn(curPage());if(!list.length)return;copyText(list.map(({b})=>b.text).join('\n'))};
+$('#wipClear').onclick=()=>{const list=workingIn(curPage());if(!list.length)return;const snap=snapshot();list.forEach(({b})=>{delete b.working});save();renderAll();toast(`${list.length} tarefa${list.length===1?'':'s'} retirada${list.length===1?'':'s'} de “em curso”`,snap)};
+$('#wipPaint').onclick=e=>{const list=workingIn(curPage());if(!list.length)return;const r=e.currentTarget.getBoundingClientRect();
+ const paint=key=>c=>{list.forEach(({b})=>{if(c)b[key]=c;else delete b[key]});save();renderAll();toast(c?'Tarefas pintadas':'Cor removida')};
+ menu(null,[{label:'Cor da caixa…',fn:rr=>colorMenu(rr,'Cor da caixa (todas)',null,paint('boxColor'))},{label:'Cor do texto…',fn:rr=>colorMenu(rr,'Cor do texto (todas)',null,paint('textColor'))}],r)};
 $('#wipAll').onclick=()=>{const list=workingIn(curPage());if(!list.length)return;const snap=snapshot();
  const top=list.filter(({b})=>!list.some(o=>o.b!==b&&contains(o.b,b.id)));
  top.forEach(({b})=>{if(!b.done)toggle(b.id)});renderAll();

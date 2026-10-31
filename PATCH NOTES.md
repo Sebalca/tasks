@@ -1,5 +1,11 @@
 # Checklist — PATCH NOTES
 
+## v0.10b — 2026-10-31
+- Caixa **"Em curso"** com novos botões ao lado de "Concluir todas":
+  - **Copiar todas**: copia o texto das tarefas em curso, uma por linha.
+  - **Pintar todas**: cor da caixa ou do texto, ou sem cor.
+  - **Desmarcar todas**: tira todas de "em curso", com opção Desfazer.
+
 ## v0.10a — 2026-10-31
 - Novo ícone ⌨ no topo, ao lado do botão da conta/definições, que abre diretamente os **Atalhos** (no computador; escondido no telemóvel).
 - A janela fica mais larga (até 860 px) quando está no separador Atalhos.
