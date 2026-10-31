@@ -1,5 +1,8 @@
 # Checklist — PATCH NOTES
 
+## v0.10c — 2026-10-31
+- "Copiar todas" (caixa Em curso) passa a copiar em formato de lista, pronto a colar no Claude ou noutro editor: o título por baixo do qual a tarefa está (ou o nome da secção), uma linha em branco, `* tarefa` e as subtarefas por fazer indentadas (`   * subtarefa`). As tarefas agrupam-se por título.
+
 ## v0.10b — 2026-10-31
 - Caixa **"Em curso"** com novos botões ao lado de "Concluir todas":
   - **Copiar todas**: copia o texto das tarefas em curso, uma por linha.

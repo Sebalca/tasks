@@ -591,7 +591,7 @@ dialog .close{margin-top:16px;float:right;color:var(--accent);font-weight:600;pa
 (()=>{
 'use strict';
 /* =========================================================
-   Checklist v0.10b — dados em localStorage.
+   Checklist v0.10c — dados em localStorage.
    Estrutura pronta para Supabase (user_site_data:
    site_id 'checklist', chave 'data', valor = objeto S).
    ========================================================= */
@@ -1227,7 +1227,18 @@ TL.addEventListener('change',e=>{if(e.target.matches('.cb')){const id=e.target.p
 TL.addEventListener('click',e=>{const rp=e.target.closest('.repor');if(rp){reporTask(rp.parentNode.dataset.id);return}const m=e.target.closest('.more');if(m)todoMenu(m,m.parentNode.dataset.id)});
 var wipOpen=false;
 $('#wipToggle').onclick=()=>{wipOpen=!wipOpen;$('#wip').classList.toggle('closed',!wipOpen)};
-$('#wipCopy').onclick=()=>{const list=workingIn(curPage());if(!list.length)return;copyText(list.map(({b})=>b.text).join('\n'))};
+function wipText(){
+ const list=workingIn(curPage());const ids=new Set(list.map(x=>x.b.id));const groups=[];const byKey=new Map();
+ list.forEach(({b,t})=>{
+  const path=pathTo(b.id,t.blocks)||[b];if(path.slice(0,-1).some(a=>ids.has(a.id)))return; // já vai como sub-tarefa do pai
+  let head='';for(const x of t.blocks){if(x.type==='h1'||x.type==='h2')head=x.text;if(x===path[0])break}
+  const key=t.id+'|'+head;if(!byKey.has(key)){const g={title:(head||t.title||'Sem título').trim(),items:[]};byKey.set(key,g);groups.push(g)}
+  byKey.get(key).items.push(b)});
+ const lines=[];const sub=(arr,d)=>arr.forEach(c=>{if(c.type!=='task'||c.done)return;lines.push(' '.repeat(3*d)+'* '+(c.text||'').replace(/\n/g,' '));sub(c.children||[],d+1)});
+ groups.forEach((g,i)=>{if(i)lines.push('');lines.push(g.title,'');g.items.forEach(b=>{lines.push('* '+(b.text||'').replace(/\n/g,' '));sub(b.children||[],1)})});
+ return lines.join('\n');
+}
+$('#wipCopy').onclick=()=>{if(!workingIn(curPage()).length)return;copyText(wipText())};
 $('#wipClear').onclick=()=>{const list=workingIn(curPage());if(!list.length)return;const snap=snapshot();list.forEach(({b})=>{delete b.working});save();renderAll();toast(`${list.length} tarefa${list.length===1?'':'s'} retirada${list.length===1?'':'s'} de “em curso”`,snap)};
 $('#wipPaint').onclick=e=>{const list=workingIn(curPage());if(!list.length)return;const r=e.currentTarget.getBoundingClientRect();
  const paint=key=>c=>{list.forEach(({b})=>{if(c)b[key]=c;else delete b[key]});save();renderAll();toast(c?'Tarefas pintadas':'Cor removida')};
