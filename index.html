@@ -591,7 +591,7 @@ dialog .close{margin-top:16px;float:right;color:var(--accent);font-weight:600;pa
 (()=>{
 'use strict';
 /* =========================================================
-   Checklist v0.10c — dados em localStorage.
+   Checklist v0.11 — dados em localStorage.
    Estrutura pronta para Supabase (user_site_data:
    site_id 'checklist', chave 'data', valor = objeto S).
    ========================================================= */
@@ -791,7 +791,7 @@ function renderWip(p){
 function sideTop(){ // ordem de topo das minhas páginas e pastas
  const own=S.pages.filter(p=>!p._recv&&!p.folder),keys=new Set([...own.map(p=>'p:'+p.id),...S.folders.map(f=>'f:'+f.id)]);
  const out=S.sideOrder.filter(k=>keys.has(k));own.forEach(p=>{if(!out.includes('p:'+p.id))out.push('p:'+p.id)});S.folders.forEach(f=>{if(!out.includes('f:'+f.id))out.push('f:'+f.id)});
- S.sideOrder=out;return out;
+ return out; // não altera S (evita marcar a conta como modificada só por mostrar a barra lateral)
 }
 function folderPages(fid){return S.pages.filter(p=>!p._recv&&p.folder===fid)}
 function findFolder(id){return S.folders.find(f=>f.id===id)}
@@ -1089,14 +1089,14 @@ function moveMenu(rect,id){
 }
 function movePageStep(p,dir){
  if(p.folder){const fp=folderPages(p.folder),i=fp.indexOf(p),q=fp[i+dir];if(!q)return;const a=S.pages,ia=a.indexOf(p),iq=a.indexOf(q);[a[ia],a[iq]]=[a[iq],a[ia]];save();renderAll();return}
- const o=sideTop(),i=o.indexOf('p:'+p.id),j=i+dir;if(j<0||j>=o.length)return;[o[i],o[j]]=[o[j],o[i]];save();renderAll();
+ const o=sideTop(),i=o.indexOf('p:'+p.id),j=i+dir;if(j<0||j>=o.length)return;[o[i],o[j]]=[o[j],o[i]];S.sideOrder=o;save();renderAll();
 }
-function newFolder(){const f={id:uid(),title:'Nova pasta',open:true};S.folders.push(f);sideTop();save();renderAll();setTimeout(()=>rename(f,'Nome da pasta'),30)}
+function newFolder(){const f={id:uid(),title:'Nova pasta',open:true};S.folders.push(f);S.sideOrder=sideTop();save();renderAll();setTimeout(()=>rename(f,'Nome da pasta'),30)}
 function folderMenu(anchor,f){
  menu(anchor,[{label:'Mudar o nome',fn:()=>rename(f,'Nome da pasta')},{label:f.icon?'Mudar ícone…':'Escolher ícone…',fn:r=>emojiMenu(r,f.icon,e=>setIcon(f,e))},
   {label:'Nova página nesta pasta',fn:()=>{addPage();const p=curPage();p.folder=f.id;f.open=true;S.sideOrder=sideTop().filter(k=>k!=='p:'+p.id);save();renderAll()}},
-  {label:'Mover para cima',fn:()=>{const o=sideTop(),i=o.indexOf('f:'+f.id);if(i>0){[o[i-1],o[i]]=[o[i],o[i-1]];save();renderAll()}}},
-  {label:'Mover para baixo',fn:()=>{const o=sideTop(),i=o.indexOf('f:'+f.id);if(i<o.length-1){[o[i+1],o[i]]=[o[i],o[i+1]];save();renderAll()}}},
+  {label:'Mover para cima',fn:()=>{const o=sideTop(),i=o.indexOf('f:'+f.id);if(i>0){[o[i-1],o[i]]=[o[i],o[i-1]];S.sideOrder=o;save();renderAll()}}},
+  {label:'Mover para baixo',fn:()=>{const o=sideTop(),i=o.indexOf('f:'+f.id);if(i<o.length-1){[o[i+1],o[i]]=[o[i],o[i+1]];S.sideOrder=o;save();renderAll()}}},
   '-',{label:'Apagar pasta (as páginas ficam)',danger:1,fn:()=>{const o=sideTop(),i=o.indexOf('f:'+f.id);const ps=folderPages(f.id);ps.forEach(p=>delete p.folder);
    o.splice(i,1,...ps.map(p=>'p:'+p.id));S.sideOrder=o;S.folders=S.folders.filter(x=>x!==f);save();renderAll();toast('Pasta apagada')}}]);
 }
@@ -1652,8 +1652,29 @@ async function push(force){
   setCloud(navigator.onLine?'error':'offline',res.error.message);clearTimeout(syncT);syncT=setTimeout(push,15000);return;
  }
  if(!res.data||!res.data.length){sync();return}               // alguém gravou entretanto → comparar
- meta.uid=USER.id;meta.rev=rev;meta.hash=h;meta.at=res.data[0].updated_at;saveMeta();
+ meta.uid=USER.id;meta.rev=rev;meta.hash=h;meta.at=res.data[0].updated_at;saveMeta();setBase(body);
  if(isDirty()){clearTimeout(syncT);syncT=setTimeout(push,600)}else setCloud('ok');
+}
+const BASEK=KEY+'.base';
+function setBase(obj){try{localStorage.setItem(BASEK,JSON.stringify(obj))}catch(e){}}
+function getBase(){try{return JSON.parse(localStorage.getItem(BASEK))}catch(e){return null}}
+const js=o=>JSON.stringify(o===undefined?null:o);
+function mergePage(x,y,z){
+ if(js(y)===js(z))return y;if(x&&js(y)===js(x))return z;if(x&&js(z)===js(x))return y;
+ if(y._doc||z._doc||!Array.isArray(y.tabs)||!Array.isArray(z.tabs))return y; // referências a partilhas: fica a local
+ try{const m=merge3('page',x&&Array.isArray(x.tabs)?x:{tabs:[]},y,z);return m}catch(e){return y}
+}
+function mergeBlob(B,L,R){
+ // fusão a 3 vias da cópia pessoal: páginas → secções → tarefas (o que mudou de cada lado é mantido)
+ B=B||{pages:[]};const bp=new Map((B.pages||[]).map(p=>[p.id,p])),lp=new Map((L.pages||[]).map(p=>[p.id,p])),rp=new Map((R.pages||[]).map(p=>[p.id,p]));
+ const bo=(B.pages||[]).map(p=>p.id),lo=(L.pages||[]).map(p=>p.id),ro=(R.pages||[]).map(p=>p.id);
+ const order=(js(lo)!==js(bo)?lo:ro).slice();[...lo,...ro].forEach(id=>{if(!order.includes(id))order.push(id)});
+ const pages=[];order.forEach(id=>{const x=bp.get(id),y=lp.get(id),z=rp.get(id);
+  if(y&&z)pages.push(mergePage(x,y,z));
+  else if(y){if(!x||js(y)!==js(x))pages.push(y)}   // nova cá, ou apagada lá mas alterada cá
+  else if(z){if(!x||js(z)!==js(x))pages.push(z)}});
+ const out={};new Set([...Object.keys(L),...Object.keys(R)]).forEach(k=>{if(k==='pages'||k==='rev')return;out[k]=js(L[k])!==js(B[k])?L[k]:R[k]});
+ out.pages=pages;return out;
 }
 function applyRemote(valor,updatedAt){
  applying=true;
@@ -1661,7 +1682,7 @@ function applyRemote(valor,updatedAt){
  // o conteúdo das páginas/secções partilhadas vem sempre de tasks_docs, nunca da cópia pessoal
  (v.pages||[]).forEach(p=>{if(p._doc)delete p.tabs;else (p.tabs||[]).forEach(t=>{if(t._doc)delete t.blocks})});
  S=fix(Object.assign(v,keep));
- meta.uid=USER.id;meta.rev=rev;meta.hash=curHash();meta.at=updatedAt;saveMeta();
+ meta.uid=USER.id;meta.rev=rev;meta.hash=curHash();meta.at=updatedAt;saveMeta();setBase(payload());
  mountAll();saveNow();histReset();renderAll();applying=false;setCloud('ok');
 }
 async function sync(){
@@ -1675,11 +1696,21 @@ async function sync(){
  if(meta.uid===USER.id&&rrev===meta.rev){if(dirty)push();else setCloud('ok');return}
  if(!dirty){applyRemote(d.valor,d.updated_at);return}
  if(meta.uid===USER.id&&rrev<meta.rev){push();return}
- askConflict(d);
+ // os dois lados mudaram: juntar automaticamente
+ try{
+  const R=JSON.parse(JSON.stringify(d.valor));delete R.rev;const L=payload();const base=meta.uid===USER.id?getBase():null;
+  const M=mergeBlob(base,L,R);
+  applying=true;const keep={cur:S.cur,ui:S.ui};
+  (M.pages||[]).forEach(p=>{if(p._doc)delete p.tabs;else (p.tabs||[]).forEach(t=>{if(t._doc)delete t.blocks})});
+  const recv=S.pages.filter(p=>p._recv);S=fix(Object.assign(JSON.parse(JSON.stringify(M)),keep));recv.forEach(p=>{if(!S.pages.some(q=>q.id===p.id))S.pages.push(p)});
+  meta.uid=USER.id;meta.rev=rrev;meta.hash='merge';meta.at=d.updated_at;saveMeta();setBase(R);
+  mountAll();try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}histReset();renderAll();applying=false;
+  toast('Alterações de outro dispositivo juntadas com as deste');push();
+ }catch(e){applying=false;console.error(e);askConflict(d)}
 }
 function askConflict(d){
  blocked=true;setCloud('conflict');
- const n=v=>{let t=0;(v.pages||[]).forEach(p=>p.tabs.forEach(tb=>walk(tb.blocks,b=>{if(b.type==='task')t++})));return t};
+ const n=v=>{let t=0;(v.pages||[]).forEach(p=>(p.tabs||[]).forEach(tb=>walk(tb.blocks||[],b=>{if(b.type==='task')t++})));return t};
  $('#cfInfo').textContent=`Conta: ${n(d.valor)} tarefas (gravadas a ${fmtDate(Date.parse(d.updated_at))}). Este dispositivo: ${n(S)} tarefas.`;
  const dlg=$('#conflict');
  $('#cfRemote').onclick=()=>{dlg.close();blocked=false;const snap=snapshot();applyRemote(d.valor,d.updated_at);toast('Tarefas da conta carregadas',snap)};
@@ -1711,12 +1742,19 @@ $('#accUp').onclick=async()=>{if(!window.Auth){accMsg('Sem ligação ao servidor
  if(error)accMsg(trErr(error),1);else if(data.session)accMsg('');else accMsg('Conta criada. Abre o email de confirmação que te enviámos e depois volta aqui para entrar.')};
 $('#accForgot').onclick=async()=>{if(!SB){accMsg('Sem ligação ao servidor de contas.',1);return}const em=$('#accEmail').value.trim();if(!em){accMsg('Escreve primeiro o teu email.',1);return}
  const {error}=await SB.auth.resetPasswordForEmail(em,{redirectTo:location.origin+location.pathname});accMsg(error?trErr(error):'Enviámos um email com um link para definires uma nova password.',!!error)};
-$('#accSync').onclick=()=>{if(blocked){blocked=false}sync()};
+$('#accSync').onclick=async()=>{
+ if(!USER)return;blocked=false;const b=$('#accSync');b.disabled=true;b.textContent='A sincronizar…';
+ for(let i=0;i<40&&busy;i++)await new Promise(r=>setTimeout(r,150));
+ await sync();for(let i=0;i<40&&(busy||cloudState==='saving');i++)await new Promise(r=>setTimeout(r,150));
+ if(typeof loadShares==='function')await loadShares();
+ b.disabled=false;b.textContent='Sincronizar agora';
+ toast(cloudState==='ok'?'Sincronizado ✓':cloudState==='offline'?'Sem ligação à internet':'Não foi possível sincronizar. Tenta de novo daqui a pouco.');
+};
 $('#accOutBtn').onclick=async()=>{
  if(!confirm('Terminar sessão?\n\nAs tarefas ficam guardadas na conta e são removidas deste dispositivo. A sessão termina em todos os sites frisk.pt neste browser.'))return;
  if(isDirty()&&!blocked){clearTimeout(syncT);await push();if(isDirty()&&!confirm('Há alterações que ainda não foram guardadas na conta e vão perder-se. Continuar?'))return}
  explicitOut=true;try{localStorage.removeItem(RTK)}catch(e){}try{await Auth.signOut()}catch(e){}
- window.__leaving=true;try{localStorage.removeItem(KEY);localStorage.removeItem(META);localStorage.removeItem(KEY+'.docs')}catch(e){}
+ window.__leaving=true;try{localStorage.removeItem(KEY);localStorage.removeItem(META);localStorage.removeItem(KEY+'.docs');localStorage.removeItem(BASEK)}catch(e){}
  removeEventListener('beforeunload',saveNow);location.reload();
 };
 function emptyState(){const t={id:uid(),title:'Secção 1',blocks:[nb()]};const p={id:uid(),title:'As minhas tarefas',tabs:[t],doneLog:[]};return fix({v:1,pages:[p],seeds:['financas-v1'],cur:{page:p.id,tab:t.id},ui:{doneClosed:{}},settings:S&&S.settings})}
@@ -1726,7 +1764,7 @@ function lockOut(){
  const uidWas=meta.uid;if(!uidWas)return;
  try{if(!explicitOut&&isDirty())localStorage.setItem(KEY+'.pend.'+uidWas,JSON.stringify({S:payload(),rev:meta.rev}))}catch(e){}
  applying=true;clearTimeout(syncT);
- try{localStorage.removeItem(KEY);localStorage.removeItem(META);localStorage.removeItem(KEY+'.docs');localStorage.removeItem(RTK)}catch(e){}
+ try{localStorage.removeItem(KEY);localStorage.removeItem(META);localStorage.removeItem(KEY+'.docs');localStorage.removeItem(RTK);localStorage.removeItem(BASEK)}catch(e){}
  meta={};DOCS.clear();COMM.clear();REM.clear();closeCP();if(chan&&SB){try{SB.removeChannel(chan)}catch(e){}chan=null}
  S=emptyState();histReset();try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}meta.hash=curHash();saveMeta();
  applying=false;renderAll();
@@ -1764,10 +1802,13 @@ async function initCloud(){
 addEventListener('online',()=>{if(USER)sync()});
 addEventListener('offline',()=>{if(USER)setCloud('offline')});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&USER&&!busy&&!blocked)sync()});
-setInterval(()=>{if(USER&&!document.hidden&&!busy&&!blocked&&!isDirty())sync()},120000);
+setInterval(()=>{if(USER&&!document.hidden&&!busy&&!blocked)sync()},30000);
+addEventListener('focus',()=>{if(USER&&!busy&&!blocked)sync()});
+addEventListener('pageshow',e=>{if(e.persisted&&USER)sync()});
 /* =========================================================
    PARTILHA de páginas/secções (tabelas tasks_docs / tasks_shares)
    ========================================================= */
+var rtT=null;
 var DOCS=new Map(),DMETA_KEY=KEY+'.docs',chan=null,shareT=null;
 var dmeta=(()=>{try{return JSON.parse(localStorage.getItem(DMETA_KEY))||{}}catch(e){return{}}})();
 function saveDMeta(){const o={};DOCS.forEach((d,id)=>{if(d.base)o[id]={rev:d.rev,base:d.base,own:d.own}});try{localStorage.setItem(DMETA_KEY,JSON.stringify(o))}catch(e){}}
@@ -2248,6 +2289,7 @@ function startShare(){
  setTimeout(loadShares,600);
  try{if(chan)SB.removeChannel(chan);
   chan=SB.channel('tasks-'+USER.id)
+   .on('postgres_changes',{event:'*',schema:'public',table:'user_site_data',filter:'user_id=eq.'+USER.id},p=>{const v=p.new&&p.new.valor;if(!p.new||p.new.site_id!==SITE||!v)return;if((v.rev||0)!==meta.rev){clearTimeout(rtT);rtT=setTimeout(()=>{if(!busy)sync()},400)}})
    .on('postgres_changes',{event:'*',schema:'public',table:'tasks_docs'},p=>{if(p.eventType==='DELETE'){const id=p.old&&p.old.id;const d=DOCS.get(id);if(d&&!d.own){DOCS.delete(id);unplace(id);fix(S);saveDMeta();renderAll();toast('Uma partilha foi removida pelo dono')}return}if(p.new)onDocRemote(p.new)})
    .on('postgres_changes',{event:'*',schema:'public',table:'tasks_shares'},()=>scheduleShares())
    .on('postgres_changes',{event:'*',schema:'public',table:'tasks_comments'},()=>scheduleComments())

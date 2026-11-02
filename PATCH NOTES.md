@@ -1,5 +1,15 @@
 # Checklist — PATCH NOTES
 
+## v0.11 — 2026-11-02
+- **Correção da sincronização entre dispositivos**:
+  - Desde a v0.10 (pastas), mostrar a barra lateral alterava a ordem guardada, e por isso qualquer dispositivo parecia ter "alterações por enviar". Isto abria o aviso de conflito.
+  - O aviso de conflito tinha um erro com páginas partilhadas e deixava a sincronização bloqueada. Era por isso que o "Sincronizar agora" não fazia nada.
+- **Fusão automática**: quando dois dispositivos alteram a conta ao mesmo tempo, as alterações são juntadas página a página, secção a secção e tarefa a tarefa, em vez de se perguntar qual manter. Cada dispositivo guarda a última versão sincronizada para saber o que mudou de cada lado.
+- **Atualização automática**:
+  - Sincroniza ao abrir a página, ao voltar ao separador ou janela, quando a internet volta, e a cada 30 segundos.
+  - Em tempo real: quando outro dispositivo grava, este recebe as alterações em 1–2 segundos (Supabase Realtime em `user_site_data`).
+- **"Sincronizar agora"** mostra "A sincronizar…" e depois "Sincronizado ✓" ou o erro. Também atualiza as páginas partilhadas.
+
 ## v0.10c — 2026-10-31
 - "Copiar todas" (caixa Em curso) passa a copiar em formato de lista, pronto a colar no Claude ou noutro editor: o título por baixo do qual a tarefa está (ou o nome da secção), uma linha em branco, `* tarefa` e as subtarefas por fazer indentadas (`   * subtarefa`). As tarefas agrupam-se por título.
 
