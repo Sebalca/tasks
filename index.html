@@ -369,6 +369,49 @@ dialog td{padding:5px 0;vertical-align:top}
 dialog td:first-child{white-space:nowrap;padding-right:16px;color:var(--muted)}
 kbd{font:12px monospace;border:1px solid var(--line);border-radius:4px;padding:1px 5px;background:var(--bg)}
 dialog .close{margin-top:16px;float:right;color:var(--accent);font-weight:600;padding:6px 10px;border-radius:6px}
+/* ---------- v0.12: recolher páginas, índice, pesquisa, tarefa rápida ---------- */
+.sh-l{display:flex;align-items:center;gap:2px}
+.side-head .srch-btn{width:30px;height:30px}
+.item .pcar{flex:none;width:16px;height:22px;margin-left:-8px;margin-right:-4px;display:grid;place-items:center;color:var(--muted);border-radius:4px;transition:transform .15s}
+.item .pcar:hover{background:rgba(127,127,127,.18)}
+.item.page.pclosed .pcar{transform:rotate(-90deg)}
+.item.page.pclosed.active{background:var(--hover)}
+.toc{margin:0 0 4px 30px;border-left:2px solid var(--line);padding:2px 0}
+.toc-i{display:block;width:100%;text-align:left;font-size:13px;padding:4px 10px;color:var(--muted);border-radius:0 12px 12px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.toc-i.h2{padding-left:24px;font-size:12.5px}
+.toc-i.h1{color:var(--text);font-weight:600}
+.toc-i:hover{background:var(--hover);color:var(--text)}
+.toc-e{font-size:12px;color:var(--muted);padding:4px 10px;font-style:italic}
+.row{scroll-margin-top:70px}
+#srchBtn2{display:none}
+body.side-closed #srchBtn2{display:grid;position:absolute;left:12px;top:calc(100% + 2px)}
+#srchDlg{width:min(640px,calc(100vw - 24px));max-width:none;padding:0;margin-top:10vh;overflow:hidden}
+.srch-in{display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid var(--line);color:var(--muted)}
+#srchQ{flex:1;min-width:0;font:16px Arial,sans-serif;border:0;outline:none;background:transparent;color:var(--text);padding:6px 0}
+#srchRes{max-height:min(60vh,520px);overflow:auto;padding:6px 0}
+.sr{display:block;width:100%;text-align:left;padding:7px 16px;border-left:3px solid transparent}
+.sr:hover,.sr.on{background:var(--hover)}
+.sr.on{border-left-color:var(--accent)}
+.sr .st{display:flex;gap:8px;align-items:baseline;font-size:14px}
+.sr .st .tx{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sr .cr{font-size:12px;color:var(--muted);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sr mark{background:#fde68a;color:inherit;border-radius:2px;padding:0 1px}
+[data-theme=dark] .sr mark{background:#7a5c00}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .sr mark{background:#7a5c00}}
+.sr .tg{flex:none;font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:10px;padding:0 7px}
+.sr .tg.dn{color:var(--accent);border-color:var(--accent)}
+.srch-e{padding:18px 16px;color:var(--muted);font-size:14px}
+.srch-foot{border-top:1px solid var(--line);padding:6px 14px;font-size:12px;color:var(--muted)}
+.srch-foot kbd{margin-right:2px}
+#quickDlg{width:min(460px,calc(100vw - 24px))}
+#qText{width:100%;box-sizing:border-box;font:16px Arial,sans-serif;color:var(--text);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:9px 10px;resize:vertical;outline:none}
+#qText:focus{border-color:var(--accent)}
+.q-lbl{font-size:13px;color:var(--muted);margin:12px 0 6px}
+.rem-quick button.on{background:var(--accent-soft);border-color:var(--accent);color:var(--accent);font-weight:600}
+.q-hint{margin:6px 0 0;min-height:1em}
+#qFab{display:none;position:fixed;right:18px;bottom:22px;z-index:30;width:56px;height:56px;border-radius:50%;background:var(--accent);color:#fff;box-shadow:0 4px 14px rgba(0,0,0,.3);place-items:center}
+@media (max-width:820px),(hover:none){#qFab{display:grid}}
+body.side-open #qFab,body.cp-open #qFab,body.locked #qFab,body.typing #qFab{display:none}
 /* ---------- mobile ---------- */
 @media (hover:none){.grip{opacity:.45}.more{display:none}.item .dots{opacity:.7}}
 @media (max-width:820px){
@@ -377,6 +420,8 @@ dialog .close{margin-top:16px;float:right;color:var(--accent);font-weight:600;pa
  body.side-open #backdrop{display:block;position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:35}
  .doc{margin:0 0 80px;padding:22px 16px 48px 22px;border-radius:0;box-shadow:none;min-height:calc(100% - 52px)}
  .tab-title{font-size:24px}
+ body:not(.side-open) #srchBtn2{display:grid;position:absolute;left:12px;top:calc(100% + 2px)}
+ body:not(.side-open) .tt-row{padding-left:30px}
  #blocks{margin-left:-20px}
  :root{--I:22px;--HO:14px}
  .doc{padding-left:30px}
@@ -385,7 +430,7 @@ dialog .close{margin-top:16px;float:right;color:var(--accent);font-weight:600;pa
 </head>
 <body>
 <aside id="side">
-  <div class="side-head"><span>Páginas</span><button class="iconbtn" id="addPage" title="Nova página"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6z"/></svg></button></div>
+  <div class="side-head"><span class="sh-l"><span>Páginas</span><button class="iconbtn srch-btn" id="srchBtn" title="Pesquisar em tudo (Ctrl+K)"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg></button></span><button class="iconbtn" id="addPage" title="Nova página"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6z"/></svg></button></div>
   <nav id="pages"></nav>
   <div class="side-foot">
     <button id="accBtn2">Conta</button>
@@ -397,10 +442,12 @@ dialog .close{margin-top:16px;float:right;color:var(--accent);font-weight:600;pa
   </div>
 </aside>
 <div id="backdrop"></div>
+<button id="qFab" title="Tarefa rápida" aria-label="Tarefa rápida"><svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6z"/></svg></button>
 
 <main id="main">
   <header class="top">
     <button class="iconbtn" id="menuBtn" title="Mostrar/ocultar páginas"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M3 18h18v-2H3zm0-5h18v-2H3zm0-7v2h18V6z"/></svg></button>
+    <button class="iconbtn srch-btn" id="srchBtn2" title="Pesquisar em tudo (Ctrl+K)"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg></button>
     <button id="pageIcon" class="emo-btn" title="Mudar ícone" hidden></button>
     <input id="pageTitle" placeholder="Nome da página" aria-label="Nome da página">
     <button class="iconbtn" id="kbdBtn" title="Atalhos de teclado"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M20 5H4c-1.1 0-1.99.9-1.99 2L2 17c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm-9 3h2v2h-2V8zm0 3h2v2h-2v-2zM8 8h2v2H8V8zm0 3h2v2H8v-2zm-1 2H5v-2h2v2zm0-3H5V8h2v2zm9 7H8v-2h8v2zm0-4h-2v-2h2v2zm0-3h-2V8h2v2zm3 3h-2v-2h2v2zm0-3h-2V8h2v2z"/></svg></button>
@@ -496,6 +543,10 @@ dialog .close{margin-top:16px;float:right;color:var(--accent);font-weight:600;pa
     <tr><td><kbd>Esc</kbd></td><td>Entrar no modo <b>linhas</b>: seleciona a primeira linha visível; <kbd>↑</kbd>/<kbd>↓</kbd> movem a seleção, <kbd>Enter</kbd> edita, <kbd>Esc</kbd> sai</td></tr>
     <tr><td><kbd>Ctrl</kbd>+<kbd>←</kbd></td><td>Modo <b>páginas</b> (barra lateral): <kbd>↑</kbd>/<kbd>↓</kbd> percorrem páginas, pastas e secções, <kbd>Enter</kbd> abre, <kbd>←</kbd>/<kbd>→</kbd> fecham/abrem pastas</td></tr>
     <tr><td><kbd>Ctrl</kbd>+<kbd>→</kbd></td><td>Voltar ao modo linhas</td></tr>
+    <tr><td><kbd>Ctrl</kbd>+<kbd>K</kbd></td><td>Pesquisar em tudo: páginas, secções, tarefas (também concluídas) e comentários (também a 🔍 ao lado de “Páginas”)</td></tr>
+    <tr><td><kbd>Alt</kbd>+<kbd>N</kbd></td><td>Tarefa rápida (com lembrete opcional) na página ⚡ Tarefas rápidas. No telemóvel: botão + ou premir o ícone da app</td></tr>
+    <tr><td>Clicar na secção aberta</td><td>Mostra/esconde os títulos da secção na barra lateral; clicar num título leva até ele</td></tr>
+    <tr><td>Seta ▾ ao lado da página</td><td>Recolher/mostrar as secções da página (no modo páginas: <kbd>←</kbd>/<kbd>→</kbd>)</td></tr>
     <tr class="grp"><td colspan="2">Formatação (texto selecionado)</td></tr>
     <tr><td><kbd>Ctrl</kbd>+<kbd>B</kbd></td><td>Negrito</td></tr>
     <tr><td><kbd>Ctrl</kbd>+<kbd>I</kbd></td><td>Itálico</td></tr>
@@ -564,6 +615,22 @@ dialog .close{margin-top:16px;float:right;color:var(--accent);font-weight:600;pa
   <button class="btn" id="cfLocal">Usar as deste dispositivo<small>Substitui as que estão na conta.</small></button>
   <button class="btn" id="cfLater">Decidir depois<small>Fica tudo como está e não sincroniza até decidires.</small></button>
 </dialog>
+<dialog id="srchDlg">
+  <div class="srch-in"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg><input id="srchQ" type="search" placeholder="Pesquisar páginas, secções, tarefas e comentários" autocomplete="off" enterkeyhint="search"></div>
+  <div id="srchRes"></div>
+  <div class="srch-foot"><span><kbd>↑</kbd><kbd>↓</kbd> escolher · <kbd>Enter</kbd> abrir · <kbd>Esc</kbd> fechar</span></div>
+</dialog>
+<dialog id="quickDlg">
+  <h3>⚡ Tarefa rápida</h3>
+  <textarea id="qText" rows="2" placeholder="O que há para fazer?" enterkeyhint="done"></textarea>
+  <div class="q-lbl">Lembrete</div>
+  <div class="rem-quick" id="qQuick">
+    <button data-q="none" class="on">Sem lembrete</button><button data-q="1h">Daqui a 1 hora</button><button data-q="18">Hoje às 18h</button><button data-q="tm9">Amanhã às 9h</button><button data-q="mon9">Próxima segunda às 9h</button><button data-q="pick">Escolher…</button>
+  </div>
+  <div class="rem-row" id="qWhen" hidden><input type="date" id="qDate"><input type="time" id="qTime" step="300"></div>
+  <p class="hint q-hint" id="qHint"></p>
+  <div class="dlg-btns"><button onclick="this.closest('dialog').close()">Cancelar</button><button id="qSave">Adicionar</button></div>
+</dialog>
 <dialog id="remDlg">
   <h3>⏰ Lembrete</h3>
   <div class="rem-q" id="remQ"></div>
@@ -591,7 +658,7 @@ dialog .close{margin-top:16px;float:right;color:var(--accent);font-weight:600;pa
 (()=>{
 'use strict';
 /* =========================================================
-   Checklist v0.11 — dados em localStorage.
+   Checklist v0.12 — dados em localStorage.
    Estrutura pronta para Supabase (user_site_data:
    site_id 'checklist', chave 'data', valor = objeto S).
    ========================================================= */
@@ -796,6 +863,15 @@ function sideTop(){ // ordem de topo das minhas páginas e pastas
 function folderPages(fid){return S.pages.filter(p=>!p._recv&&p.folder===fid)}
 function findFolder(id){return S.folders.find(f=>f.id===id)}
 function pageOrder(){const out=[];sideTop().forEach(k=>{if(k[0]==='f')folderPages(k.slice(2)).forEach(p=>out.push(p));else{const p=findPage(k.slice(2));if(p)out.push(p)}});S.pages.filter(p=>p._recv).forEach(p=>out.push(p));return out}
+var TOC=null; // secção com o índice de títulos aberto
+function pageOpen(p,cp){const o=S.ui.pgOpen&&S.ui.pgOpen[p.id];return p===cp?o!==false:o===true}
+function setPageOpen(p,v){S.ui.pgOpen=S.ui.pgOpen||{};const def=p===curPage();if(v===def)delete S.ui.pgOpen[p.id];else S.ui.pgOpen[p.id]=v;try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}renderSide()}
+function headsOf(t,p){const out=[];(function w(arr){for(const b of arr){if(b.type==='task'){if(b.done||isOverdue(b,p,t))continue;w(b.children);continue}if((b.type==='h1'||b.type==='h2')&&(b.text||'').trim())out.push(b)}})(t.blocks);return out}
+function tocEl(t){const box=el('div','toc'),hs=headsOf(t,curPage());
+ if(!hs.length){const e=el('div','toc-e');e.textContent='Sem títulos nesta secção';box.append(e);return box}
+ hs.forEach(b=>{const a=el('button','toc-i '+b.type);a.textContent=b.text;a.dataset.go=b.id;a.title=b.text;box.append(a)});return box}
+function goRow(id,where){const sel=(where||'#blocks,#doneList,#todoList').split(',').map(x=>x+` .row[data-id="${id}"]`).join(',');const r=document.querySelector(sel);if(!r)return false;
+ r.scrollIntoView({block:'center',behavior:'smooth'});r.classList.remove('flash');void r.offsetWidth;r.classList.add('flash');setTimeout(()=>r.classList.remove('flash'),1300);return true}
 function renderSide(){
  const nav=$('#pages');nav.innerHTML='';const cp=curPage(),ct=curTab();
  const rcv=S.pages.filter(p=>p._recv);
@@ -807,11 +883,12 @@ function renderSide(){
    it.innerHTML=`<span class="car"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg></span>${f.icon?`<span class="ico emo">${esc(f.icon)}</span>`:`<span class="ico">${shown?'📂':'📁'}</span>`}<span class="name"></span><span class="count">${n||''}</span><button class="dots" title="Opções da pasta">${ICON.more}</button>`;
    it.querySelector('.name').textContent=f.title||'Pasta';nav.append(it);return}
   let inF=false;if(p.p){inF=true;p=p.p}
-  const it=el('div','item page'+(p===cp?' active':'')+(inF?' infolder':''));it.dataset.page=p.id;
+  const pOpen=pageOpen(p,cp);
+  const it=el('div','item page'+(p===cp?' active':'')+(inF?' infolder':'')+(pOpen?'':' pclosed'));it.dataset.page=p.id;
   const shr=p._doc&&(p._recv||DOCS.get(p._doc)&&DOCS.get(p._doc).shared)?`<span class="shr" title="${p._recv?'Partilhada por '+esc(docOwner(p._doc))+' · '+ROLE_TXT[docRole(p._doc)]:'Partilhada'}">${p._recv?roleIco(p._doc):'👥'}</span>`:'';
-  it.innerHTML=`${icoHTML(p.icon,p._virtual?'<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>':ICON.page)}<span class="name"></span>${shr}${p._virtual?'':`<button class="dots" title="Opções da página">${ICON.more}</button>`}`;
+  it.innerHTML=`<button class="pcar" title="${pOpen?'Recolher':'Mostrar'} as secções"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg></button>${icoHTML(p.icon,p._virtual?'<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>':ICON.page)}<span class="name"></span>${shr}${p._virtual?'':`<button class="dots" title="Opções da página">${ICON.more}</button>`}`;
   it.querySelector('.name').textContent=p.title||'Sem título';nav.append(it);
-  if(p!==cp)return;
+  if(!pOpen)return;
   const box=el('div','tabs'+(inF?' infolder':''));
   const td=collectTodo(p);
   if(td.length){const ti=el('div','item tab todo'+(S.cur.view==='todo'?' active':''));ti.dataset.page=p.id;ti.dataset.todo='1';
@@ -822,6 +899,8 @@ function renderSide(){
    const tsh=t._doc&&(t._recv||DOCS.get(t._doc)&&DOCS.get(t._doc).shared)?`<span class="shr" title="${t._recv?'Partilhada por '+esc(docOwner(t._doc))+' · '+ROLE_TXT[docRole(t._doc)]:'Partilhada'}">${t._recv?roleIco(t._doc):'👥'}</span>`:'';
    ti.innerHTML=`${icoHTML(t.icon,ICON.tab)}<span class="name"></span>${tsh}<span class="count">${open||''}</span>${t._ro&&!t._doc?'':`<button class="dots" title="Opções da secção">${ICON.more}</button>`}`;
    ti.querySelector('.name').textContent=t.title||'Sem título';box.append(ti);
+   if(p===cp&&t===ct&&S.cur.view!=='todo'&&TOC===t.id){ti.classList.add('toc-on');box.append(tocEl(t))}
+   else if(p===cp&&t===ct&&S.cur.view!=='todo')ti.title='Clica outra vez para ver os títulos desta secção';
   });
   const add=el('button','addtab');add.innerHTML='<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6z"/></svg>Nova secção';
   add.onclick=()=>addTab(p);if(!p._virtual&&!p._ro)box.append(add);nav.append(box);
@@ -1312,7 +1391,7 @@ function modePill(){const p=$('#modePill');if(!p)return;
  if(NAVMODE){p.innerHTML='<b>Modo páginas</b> · ↑↓ percorrer · Enter abrir · ←→ pastas · Ctrl+→ linhas';p.hidden=false}
  else if(SEL.size&&!BS){p.innerHTML='<b>Modo linhas</b> · ↑↓ mover · Shift+↑↓ alargar · Enter editar · Esc sair · Ctrl+← páginas';p.hidden=false}
  else p.hidden=true}
-function goPage(p,tabIdx){if(!p)return;if(p.folder){const f=findFolder(p.folder);if(f)f.open=true}const t=tabIdx==='last'?p.tabs[p.tabs.length-1]:p.tabs[0];S.cur={page:p.id,tab:t.id};SEL.clear();save();renderAll();$('#main').scrollTop=0}
+function goPage(p,tabIdx){if(!p)return;if(S.ui.pgOpen&&S.ui.pgOpen[p.id]===false)delete S.ui.pgOpen[p.id];if(p.folder){const f=findFolder(p.folder);if(f)f.open=true}const t=tabIdx==='last'?p.tabs[p.tabs.length-1]:p.tabs[0];S.cur={page:p.id,tab:t.id};SEL.clear();save();renderAll();$('#main').scrollTop=0}
 function stepSection(dir){
  const order=pageOrder().filter(p=>p.tabs&&p.tabs.length);const p=curPage();const i=p.tabs.indexOf(curTab());
  if(S.cur.view==='todo'){delete S.cur.view;goPage(p,dir>0?0:'last');return}
@@ -1337,6 +1416,7 @@ document.addEventListener('keydown',e=>{
   if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();navFocus(items[Math.max(0,Math.min(items.length-1,i+(e.key==='ArrowUp'?-1:1)))]||items[0]);return}
   if(e.key==='Enter'||e.key===' '){e.preventDefault();if(!cur)return;const key=cur.dataset.folder?'f'+cur.dataset.folder:cur.dataset.tab?'t'+cur.dataset.tab:cur.dataset.todo?'todo':'p'+cur.dataset.page;cur.click();
    const again=[...NAV.querySelectorAll('.item')].find(x=>(x.dataset.folder?'f'+x.dataset.folder:x.dataset.tab?'t'+x.dataset.tab:x.dataset.todo?'todo':'p'+x.dataset.page)===key);navFocus(again);NAVMODE=true;modePill();return}
+  if(cur&&cur.dataset.page&&!cur.dataset.tab&&!cur.dataset.todo&&(e.key==='ArrowRight'||e.key==='ArrowLeft')&&!mod){e.preventDefault();const P=findPage(cur.dataset.page);setPageOpen(P,e.key==='ArrowRight');navFocus(NAV.querySelector(`.item.page[data-page="${P.id}"]`));return}
   if(cur&&cur.dataset.folder&&(e.key==='ArrowRight'||e.key==='ArrowLeft')&&!mod){e.preventDefault();const f=findFolder(cur.dataset.folder);f.open=e.key==='ArrowRight';save();renderSide();navFocus(NAV.querySelector(`.item[data-folder="${f.id}"]`));return}
   if((mod&&e.key==='ArrowRight')||e.key==='Escape'){e.preventDefault();e.stopPropagation();exitNav(true);return}
   return;
@@ -1462,11 +1542,16 @@ NAV.addEventListener('touchcancel',()=>{if(SD){clearTimeout(SD.lp);if(SD.started
 NAV.addEventListener('contextmenu',e=>{if(SD&&SD.touch)e.preventDefault()});
 NAV.addEventListener('click',e=>{
  if(sdNoClick){e.stopPropagation();e.preventDefault();return}
+ const tg=e.target.closest('.toc-i');if(tg){e.stopPropagation();closeSideMobile();goRow(tg.dataset.go,'#blocks');return}
+ const pc=e.target.closest('.pcar');if(pc){e.stopPropagation();const P=findPage(pc.closest('.item').dataset.page);if(P)setPageOpen(P,!pageOpen(P,curPage()));return}
  const it=e.target.closest('.item');if(!it)return;const pid=it.dataset.page,tid=it.dataset.tab;
  const dots=e.target.closest('.dots');
  if(it.dataset.folder){const f=findFolder(it.dataset.folder);if(dots){e.stopPropagation();folderMenu(dots,f);return}
   if(folderPages(f.id).includes(curPage())&&!f.open){f.open=true}else f.open=!f.open;save();renderSide();return}
  if(dots){e.stopPropagation();tid?tabMenu(dots,pid,tid):pageMenu(dots,pid);return}
+ if(tid&&!it.dataset.todo&&pid===curPage().id&&tid===curTab().id&&S.cur.view!=='todo'){TOC=TOC===tid?null:tid;renderSide();return}
+ TOC=null;
+ if(pid!==curPage().id&&S.ui.pgOpen&&S.ui.pgOpen[pid]===false)delete S.ui.pgOpen[pid];
  if(it.dataset.todo){S.cur.page=pid;S.cur.view='todo'}
  else if(tid)S.cur={page:pid,tab:tid};
  else if(S.cur.page!==pid)S.cur={page:pid,tab:findPage(pid).tabs[0].id};
@@ -2299,10 +2384,121 @@ function startShare(){
 }
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&USER)scheduleShares()});
 
+/* =========================================================
+   PESQUISA GLOBAL (páginas, secções, tarefas, concluídas, comentários)
+   ========================================================= */
+var SR=[],SRI=0;
+function normMap(str){let n='',map=[];for(let i=0;i<str.length;i++){const c=str[i].normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();for(const ch of c){n+=ch;map.push(i)}}return{n,map}}
+const normQ=q=>q.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().split(/\s+/).filter(Boolean);
+function hiHTML(str,terms){
+ str=String(str||'').replace(/\s+/g,' ').trim();const {n,map}=normMap(str);const marks=new Array(str.length).fill(false);let first=-1;
+ terms.forEach(t=>{let i=n.indexOf(t);while(i>=0){const a=map[i],b=map[i+t.length-1];if(first<0||a<first)first=a;for(let k=a;k<=b;k++)marks[k]=true;i=n.indexOf(t,i+t.length)}});
+ let st=0,en=str.length;if(str.length>150&&first>50){st=first-40;while(st>0&&str[st]!==' ')st--}
+ if(en-st>220)en=st+220;
+ let out=st>0?'…':'',on=false;for(let k=st;k<en;k++){if(marks[k]&&!on){out+='<mark>';on=true}if(!marks[k]&&on){out+='</mark>';on=false}out+=esc(str[k])}if(on)out+='</mark>';if(en<str.length)out+='…';return out}
+function srMatch(text,terms){if(!text)return false;const n=normMap(text).n;return terms.every(t=>n.includes(t))}
+function runSearch(q){
+ const terms=normQ(q),out=[];if(!terms.length)return out;const MAX=150;
+ const pages=pageOrder();S.pages.forEach(p=>{if(!pages.includes(p))pages.push(p)});
+ for(const p of pages){if(!p.tabs)continue;const pn=(p.icon?p.icon+' ':'')+(p.title||'Sem título');
+  if(!p._virtual&&srMatch(p.title,terms))out.push({k:'page',p,text:p.title,crumb:'Página',score:0});
+  for(const t of p.tabs){if(t._ph)continue;const tn=(t.icon?t.icon+' ':'')+(t.title||'Sem título');
+   if(srMatch(t.title,terms))out.push({k:'tab',p,t,text:t.title,crumb:pn,score:1});
+   let head='';(function w(arr,anc){for(const b of arr){
+     if(b.type==='h1'||b.type==='h2'){if(!anc.length)head=b.text}
+     const txt=b.type==='img'?'':(b.text||'');
+     if(txt&&srMatch(txt,terms)){const done=b.type==='task'&&(b.done||anc.some(a=>a.done));
+      out.push({k:'block',p,t,b,text:txt,done,crumb:[pn,tn,head&&b.type==='task'?head:''].filter(Boolean).join(' › '),score:b.type==='task'?(done?4:2):2})}
+     if(b.children&&b.children.length)w(b.children,[...anc,b])}})(t.blocks,[]);
+   if(out.length>MAX*2)break}}
+ COMM.forEach(m=>m.forEach((th,bid)=>th.list.forEach(x=>{if(!srMatch(x.body,terms))return;const f=findBlock(bid);if(!f)return;
+  out.push({k:'comment',p:f.p,t:f.t,b:f.b,text:x.body,who:x.author_name||'',crumb:[(f.p.title||'Sem título'),(f.t.title||'Sem título'),'“'+(f.b.text||'…').slice(0,60)+'”'].join(' › '),score:3})})));
+ out.sort((a,b)=>a.score-b.score);return out.slice(0,MAX)}
+function renderSearch(){
+ const q=$('#srchQ').value,R=$('#srchRes');R.innerHTML='';SR=runSearch(q);SRI=0;const terms=normQ(q);
+ if(!terms.length){const e=el('div','srch-e');e.textContent='Escreve para pesquisar em todas as páginas, secções, tarefas (também as concluídas) e comentários.';R.append(e);return}
+ if(!SR.length){const e=el('div','srch-e');e.textContent='Sem resultados para “'+q.trim()+'”.';R.append(e);return}
+ SR.forEach((r,i)=>{const b=el('button','sr'+(i===0?' on':''));b.dataset.i=i;
+  const tag=r.k==='page'?'<span class="tg">Página</span>':r.k==='tab'?'<span class="tg">Secção</span>':r.k==='comment'?`<span class="tg">💬 ${esc(r.who||'Comentário')}</span>`:r.done?'<span class="tg dn">✓ Concluída</span>':r.b.type==='h1'?'<span class="tg">Título</span>':r.b.type==='h2'?'<span class="tg">Subtítulo</span>':'';
+  b.innerHTML=`<div class="st"><span class="tx">${hiHTML(r.text,terms)}</span>${tag}</div><div class="cr">${esc(r.crumb)}</div>`;R.append(b)});
+ if(SR.length===150){const e=el('div','srch-e');e.textContent='Mostrados os primeiros 150 resultados.';R.append(e)}
+}
+function srSel(i){const L=$('#srchRes').querySelectorAll('.sr');if(!L.length)return;SRI=(i+L.length)%L.length;L.forEach((x,k)=>x.classList.toggle('on',k===SRI));L[SRI].scrollIntoView({block:'nearest'})}
+function openSearch(){const d=$('#srchDlg');if(d.open)return;closeMenu&&closeMenu();d.showModal();const q=$('#srchQ');q.select();renderSearch();setTimeout(()=>q.focus(),30)}
+function revealBlock(p,t,bid,thenComment){
+ if(p.folder){const f=findFolder(p.folder);if(f)f.open=true}
+ if(S.ui.pgOpen&&S.ui.pgOpen[p.id]===false)delete S.ui.pgOpen[p.id];
+ TOC=null;SEL.clear();
+ const path=(function f(arr,anc){for(const b of arr){if(b.id===bid)return[...anc,b];const r=f(b.children||[],[...anc,b]);if(r)return r}return null})(t.blocks,[]);
+ S.cur={page:p.id,tab:t.id};let where='#blocks';
+ if(path){if(path.some(b=>b.type==='task'&&b.done)){doneOpen.add(t.id);where='#doneList'}
+  else if(path.some(b=>b.type==='task'&&isOverdue(b,p,t))){S.cur.view='todo';where='#todoList'}}
+ save();renderAll();closeSideMobile();
+ requestAnimationFrame(()=>{goRow(bid,where);if(thenComment&&where!=='#todoList')openComments(bid)})}
+function openResult(r){
+ if(!r)return;$('#srchDlg').close();
+ if(r.k==='page'){goPage(r.p,0);closeSideMobile();return}
+ if(r.k==='tab'){if(r.p.folder){const f=findFolder(r.p.folder);if(f)f.open=true}TOC=null;S.cur={page:r.p.id,tab:r.t.id};SEL.clear();save();renderAll();closeSideMobile();$('#main').scrollTop=0;return}
+ revealBlock(r.p,r.t,r.b.id,r.k==='comment')}
+$('#srchQ').addEventListener('input',renderSearch);
+$('#srchQ').addEventListener('keydown',e=>{
+ if(e.key==='ArrowDown'){e.preventDefault();srSel(SRI+1)}else if(e.key==='ArrowUp'){e.preventDefault();srSel(SRI-1)}
+ else if(e.key==='Enter'){e.preventDefault();openResult(SR[SRI])}});
+$('#srchRes').addEventListener('click',e=>{const b=e.target.closest('.sr');if(b)openResult(SR[+b.dataset.i])});
+$('#srchDlg').addEventListener('click',e=>{if(e.target===e.currentTarget)e.currentTarget.close()});
+$('#srchBtn').onclick=openSearch;$('#srchBtn2').onclick=openSearch;
+document.addEventListener('keydown',e=>{const mod=e.ctrlKey||e.metaKey;
+ if(mod&&!e.altKey&&!e.shiftKey&&e.key.toLowerCase()==='k'){if(document.querySelector('dialog[open]:not(#srchDlg)'))return;e.preventDefault();e.stopPropagation();if(NAVMODE)exitNav(false);openSearch();return}
+ if(e.altKey&&!mod&&!e.shiftKey&&e.code==='KeyN'){if(document.querySelector('dialog[open]'))return;e.preventDefault();e.stopPropagation();openQuick()}
+},true);
+
+/* =========================================================
+   TAREFA RÁPIDA (atalho da app, botão + no telemóvel, Alt+N)
+   ========================================================= */
+var Q_WHEN='none',Q_FROM=false;
+function quickPage(){
+ let p=S.quickPage&&findPage(S.quickPage);
+ if(!p||p._recv){p={id:uid(),title:'Tarefas rápidas',icon:'⚡',tabs:[{id:uid(),title:'Entrada',blocks:[]}]};S.pages.push(p);S.quickPage=p.id;
+  S.sideOrder=['p:'+p.id,...sideTop().filter(k=>k!=='p:'+p.id)]}
+ return p}
+function qWhenSet(q){Q_WHEN=q;document.querySelectorAll('#qQuick button').forEach(b=>b.classList.toggle('on',b.dataset.q===q));
+ const w=$('#qWhen');w.hidden=q==='none';const d=new Date();
+ if(q==='1h'){d.setTime(Date.now()+3600e3);d.setSeconds(0,0)}
+ else if(q==='18'){d.setHours(18,0,0,0);if(d<new Date())d.setDate(d.getDate()+1)}
+ else if(q==='tm9'){d.setDate(d.getDate()+1);d.setHours(9,0,0,0)}
+ else if(q==='mon9'){const k=(8-d.getDay())%7||7;d.setDate(d.getDate()+k);d.setHours(9,0,0,0)}
+ else if(q==='pick'){d.setTime(Date.now()+3600e3);d.setMinutes(Math.ceil(d.getMinutes()/5)*5,0,0)}
+ if(q!=='none'){$('#qDate').value=`${d.getFullYear()}-${z2(d.getMonth()+1)}-${z2(d.getDate())}`;$('#qTime').value=`${z2(d.getHours())}:${z2(d.getMinutes())}`}
+ $('#qHint').textContent=q!=='none'&&!USER?'Para receberes o lembrete tens de entrar na conta.':''}
+function openQuick(fromLink){
+ if(document.body.classList.contains('locked')){let n=0;const t=setInterval(()=>{if(!document.body.classList.contains('locked')||++n>50){clearInterval(t);if(n<=50)openQuick(fromLink)}},300);return}
+ const d=$('#quickDlg');if(d.open)return;Q_FROM=!!fromLink;closeMenu&&closeMenu();$('#qText').value='';qWhenSet('none');d.showModal();setTimeout(()=>$('#qText').focus(),40)}
+$('#qQuick').onclick=e=>{const b=e.target.closest('button');if(b)qWhenSet(b.dataset.q)};
+$('#qText').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();$('#qSave').click()}});
+$('#qSave').onclick=async()=>{
+ const txt=$('#qText').value.replace(/\s+/g,' ').trim();if(!txt){$('#qText').focus();toast('Escreve a tarefa');return}
+ let at=null;if(Q_WHEN!=='none'){at=new Date($('#qDate').value+'T'+$('#qTime').value);if(isNaN(at)){toast('Data inválida');return}if(at<new Date()){toast('Essa hora já passou');return}}
+ const p=quickPage(),t=p.tabs[0],b=nb('task',txt);t.blocks.unshift(b);
+ $('#quickDlg').close();saveNow();
+ if(Q_FROM||curPage()===p){TOC=null;S.cur={page:p.id,tab:t.id};renderAll();requestAnimationFrame(()=>goRow(b.id,'#blocks'))}else renderAll();
+ if(!at){toast('Adicionada a ⚡ Tarefas rápidas');return}
+ if(!USER||!SB){toast('Tarefa adicionada. Entra na conta para o lembrete funcionar.');return}
+ const row={user_id:USER.id,block_id:b.id,page_id:p.id,tab_id:t.id,text:txt.slice(0,500),remind_at:at.toISOString(),repeat:'none',fired_at:null,updated_at:new Date().toISOString()};
+ const r=await SB.from('tasks_reminders').upsert(row,{onConflict:'user_id,block_id'}).select('id,block_id,page_id,tab_id,text,remind_at,repeat,fired_at').single();
+ if(r.error){toast('Tarefa adicionada, mas o lembrete falhou: '+r.error.message);return}
+ REM.set(b.id,r.data);refreshRemBadges();toast('Adicionada · lembrete '+fmtShort(r.data.remind_at));
+ if(pushOK()&&Notification.permission!=='granted')enablePush()};
+$('#qFab').onclick=()=>openQuick(false);
+document.addEventListener('focusin',e=>{const a=e.target;document.body.classList.toggle('typing',!!(a&&(a.isContentEditable||/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName))&&!a.closest('dialog')))});
+document.addEventListener('focusout',()=>setTimeout(()=>{const a=document.activeElement;if(!a||!(a.isContentEditable||/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)))document.body.classList.remove('typing')},50));
+function quickHash(){if(/^#(rapida|quick)$/.test(location.hash)){history.replaceState(null,'',location.pathname+location.search);openQuick(true)}}
+addEventListener('hashchange',quickHash);
+
 remInit();
 initCloud();
 
 renderAll();
+quickHash();
 })();
 </script>
 </body>

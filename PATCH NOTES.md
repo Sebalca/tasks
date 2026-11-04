@@ -1,5 +1,16 @@
 # Checklist — PATCH NOTES
 
+## v0.12 — 2026-11-04
+- **Recolher páginas**: seta ▾ ao lado de cada página na barra lateral esconde ou mostra as secções. Também dá para abrir as secções de outra página sem sair da atual. No modo páginas (Ctrl+←), ←/→ fazem o mesmo. O estado fica guardado neste dispositivo.
+- **Índice de títulos**: clicar na secção que já está aberta mostra, por baixo dela, os títulos e subtítulos da secção. Clicar num título leva até ele; clicar outra vez na secção esconde o índice.
+- **Pesquisa global** (🔍 ao lado de “Páginas”, ou Ctrl+K): procura em páginas, secções, tarefas (também concluídas e partilhadas) e comentários, sem distinguir acentos nem maiúsculas. ↑/↓ e Enter para abrir; o resultado é destacado na página (abre as concluídas, “Por fazer” ou os comentários quando é preciso). Com a barra lateral escondida, a 🔍 fica por baixo dos 3 traços.
+- **Tarefa rápida**: diálogo para escrever uma tarefa e, opcionalmente, um lembrete (atalhos de hora ou dia/hora à escolha). Vai para o topo da página **⚡ Tarefas rápidas** (secção “Entrada”), criada automaticamente no topo da barra lateral.
+  - Telemóvel: botão + redondo no canto inferior direito (esconde-se enquanto se escreve).
+  - App instalada (Android): premir o ícone do Tasks → “Nova tarefa rápida”.
+  - Link direto: tasks.frisk.pt/#rapida.
+  - Computador: Alt+N.
+- Lista de atalhos atualizada.
+
 ## v0.11 — 2026-11-02
 - **Correção da sincronização entre dispositivos**:
   - Desde a v0.10 (pastas), mostrar a barra lateral alterava a ordem guardada, e por isso qualquer dispositivo parecia ter "alterações por enviar". Isto abria o aviso de conflito.

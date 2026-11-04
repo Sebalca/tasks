@@ -8,6 +8,9 @@
   "background_color": "#f0f2f5",
   "theme_color": "#0b57d0",
   "lang": "pt-PT",
+  "shortcuts": [
+    { "name": "Nova tarefa rápida", "short_name": "Tarefa rápida", "description": "Criar uma tarefa (com lembrete) em ⚡ Tarefas rápidas", "url": "/#rapida", "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }] }
+  ],
   "icons": [
     { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
     { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
