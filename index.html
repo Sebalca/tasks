@@ -427,6 +427,19 @@ body.side-open #qFab,body.cp-open #qFab,body.locked #qFab,body.typing #qFab{disp
 .sug-l{flex:1;min-width:0;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 @media (max-width:820px),(hover:none){#sugBox{display:none!important}}
 .sug-set{border-bottom:1px solid var(--line);padding-bottom:10px;margin-bottom:10px}
+/* ---------- v0.14: datas de edição, números Alt ---------- */
+.edd{position:absolute;right:calc(100% + 58px);top:6px;font:12px/18px ui-monospace,Consolas,monospace;color:var(--muted);white-space:nowrap;pointer-events:auto}
+.edl{position:absolute;left:-52px;top:15px;width:calc(52px + 22px + var(--d)*var(--I));border-top:2px dashed var(--muted);opacity:.55;pointer-events:none}
+.row.h1 .edd,.row.h2 .edd{display:none}
+body.ed-inline .edl{display:none}
+body.ed-inline .edd{position:static;flex:none;align-self:center;font-size:11px;margin-left:4px;opacity:.85}
+.row.ed-ctx{opacity:.45}
+.ed-chip{display:flex;align-items:center;gap:6px;width:max-content;max-width:100%;margin:0 0 8px 26px;padding:3px 6px 3px 12px;border-radius:14px;background:var(--accent-soft);color:var(--accent);font-size:13px}
+.ed-chip button{width:22px;height:22px;border-radius:50%;color:var(--accent)}.ed-chip button:hover{background:rgba(127,127,127,.18)}
+#edFBtn.on{color:var(--accent);background:var(--accent-soft)}
+.pnum{display:none;flex:none;min-width:18px;height:18px;padding:0 4px;margin-right:-4px;border-radius:5px;background:var(--text);color:var(--panel);font:600 11px/18px Arial,sans-serif;text-align:center}
+body.alt-nums .pnum{display:inline-block}
+@media (max-width:820px){.ed-chip{margin-left:20px}}
 /* ---------- mobile ---------- */
 @media (hover:none){.grip{opacity:.45}.more{display:none}.item .dots{opacity:.7}}
 @media (max-width:820px){
@@ -466,6 +479,7 @@ body.side-open #qFab,body.cp-open #qFab,body.locked #qFab,body.typing #qFab{disp
     <button class="iconbtn srch-btn" id="srchBtn2" title="Pesquisar em tudo (Ctrl+K)"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg></button>
     <button id="pageIcon" class="emo-btn" title="Mudar ícone" hidden></button>
     <input id="pageTitle" placeholder="Nome da página" aria-label="Nome da página">
+    <button class="iconbtn" id="edFBtn" title="Filtrar por data de edição" hidden><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z"/></svg></button>
     <button class="iconbtn" id="kbdBtn" title="Atalhos de teclado"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M20 5H4c-1.1 0-1.99.9-1.99 2L2 17c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm-9 3h2v2h-2V8zm0 3h2v2h-2v-2zM8 8h2v2H8V8zm0 3h2v2H8v-2zm-1 2H5v-2h2v2zm0-3H5V8h2v2zm9 7H8v-2h8v2zm0-4h-2v-2h2v2zm0-3h-2V8h2v2zm3 3h-2v-2h2v2zm0-3h-2V8h2v2z"/></svg></button>
     <button class="iconbtn" id="cloudBtn" data-s="off" title="Conta e definições"><span class="dot"></span><span class="lbl">Entrar</span><svg class="gear" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19.14 12.94c.04-.31.06-.63.06-.94s-.02-.63-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96a7 7 0 0 0-1.62-.94l-.36-2.54A.48.48 0 0 0 13.92 2h-3.84a.48.48 0 0 0-.48.41l-.36 2.54c-.59.24-1.13.56-1.62.94l-2.39-.96a.48.48 0 0 0-.59.22L2.72 8.47a.47.47 0 0 0 .12.61l2.03 1.58c-.05.31-.07.63-.07.94s.02.63.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.47.47 0 0 0-.12-.61zM12 15.6A3.6 3.6 0 1 1 15.6 12 3.6 3.6 0 0 1 12 15.6z"/></svg></button>
   </header>
@@ -532,6 +546,10 @@ body.side-open #qFab,body.cp-open #qFab,body.locked #qFab,body.typing #qFab{disp
     <div class="seg" id="themeSeg"><button data-v="auto">Automático</button><button data-v="light">Claro</button><button data-v="dark">Escuro</button></div>
    </div>
    <div class="set-group">
+    <label class="switch"><input type="checkbox" id="edOn"> Mostrar a data da última edição <span class="hint">(Ctrl+Alt+D)</span></label>
+    <p class="hint">Mostra, à esquerda de cada tarefa, a data em que o texto (ou o tipo da linha) foi alterado pela última vez; nas antigas, a data de criação. O ícone de filtro no topo permite ver só as editadas num intervalo.</p>
+   </div>
+   <div class="set-group">
     <label class="switch"><input type="checkbox" id="todoOn"> Secção “Por fazer” (padrão)</label>
     <p class="hint">As tarefas que ficam demasiado tempo por fazer saem da sua secção e passam para “Por fazer”, que só aparece quando tem tarefas. Este é o valor por defeito: cada secção pode ter o seu próprio valor no menu ⋮ da secção.</p>
     <div class="inl" id="todoOpts">Passa ao fim de <input type="number" id="todoVal" min="1" max="9999" inputmode="numeric">
@@ -561,6 +579,8 @@ body.side-open #qFab,body.cp-open #qFab,body.locked #qFab,body.typing #qFab{disp
     <tr><td><kbd>Esc</kbd></td><td>Entrar no modo <b>linhas</b>: seleciona a primeira linha visível; <kbd>↑</kbd>/<kbd>↓</kbd> movem a seleção, <kbd>Enter</kbd> edita, <kbd>Esc</kbd> sai</td></tr>
     <tr><td><kbd>Ctrl</kbd>+<kbd>←</kbd></td><td>Modo <b>páginas</b> (barra lateral): <kbd>↑</kbd>/<kbd>↓</kbd> percorrem páginas, pastas e secções, <kbd>Enter</kbd> abre, <kbd>←</kbd>/<kbd>→</kbd> fecham/abrem pastas</td></tr>
     <tr><td><kbd>Ctrl</kbd>+<kbd>→</kbd></td><td>Voltar ao modo linhas</td></tr>
+    <tr><td>Manter <kbd>Alt</kbd> premido</td><td>Mostra o número de cada página (para usar com <kbd>Alt</kbd>+<kbd>1</kbd>…<kbd>9</kbd>)</td></tr>
+    <tr><td><kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>D</kbd></td><td>Mostrar/esconder a data da última edição das tarefas (o ícone de filtro no topo filtra por essa data)</td></tr>
     <tr><td><kbd>Ctrl</kbd>+<kbd>K</kbd></td><td>Pesquisar em tudo: páginas, secções, tarefas (também concluídas) e comentários (também a 🔍 ao lado de “Páginas”)</td></tr>
     <tr><td><kbd>Alt</kbd>+<kbd>N</kbd></td><td>Tarefa rápida (com lembrete opcional) na página ⚡ Tarefas rápidas. No telemóvel: botão + ou premir o ícone da app</td></tr>
     <tr><td>Clicar na secção aberta</td><td>Mostra/esconde os títulos da secção na barra lateral; clicar num título leva até ele</td></tr>
@@ -635,6 +655,11 @@ body.side-open #qFab,body.cp-open #qFab,body.locked #qFab,body.typing #qFab{disp
   <button class="btn" id="cfLocal">Usar as deste dispositivo<small>Substitui as que estão na conta.</small></button>
   <button class="btn" id="cfLater">Decidir depois<small>Fica tudo como está e não sincroniza até decidires.</small></button>
 </dialog>
+<dialog id="edRange">
+  <h3>Editadas entre…</h3>
+  <div class="rem-row"><label>De <input type="date" id="edFrom"></label><label>até <input type="date" id="edTo"></label></div>
+  <div class="dlg-btns"><button onclick="this.closest('dialog').close()">Cancelar</button><button id="edRangeOk">Filtrar</button></div>
+</dialog>
 <dialog id="srchDlg">
   <div class="srch-in"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg><input id="srchQ" type="search" placeholder="Pesquisar páginas, secções, tarefas e comentários" autocomplete="off" enterkeyhint="search"></div>
   <div id="srchRes"></div>
@@ -678,7 +703,7 @@ body.side-open #qFab,body.cp-open #qFab,body.locked #qFab,body.typing #qFab{disp
 (()=>{
 'use strict';
 /* =========================================================
-   Checklist v0.13 — dados em localStorage.
+   Checklist v0.14 — dados em localStorage.
    Estrutura pronta para Supabase (user_site_data:
    site_id 'checklist', chave 'data', valor = objeto S).
    ========================================================= */
@@ -826,7 +851,7 @@ function clean(html){
  return out.innerHTML;
 }
 const hasFmt=h=>/<(b|i|u|s|mark|br|a)\b/.test(h);
-function syncFrom(tx,b){b.text=tx.textContent;const h=clean(tx.innerHTML);if(b.text&&hasFmt(h))b.html=h;else delete b.html;if(!b.createdAt&&b.text.trim())b.createdAt=Date.now()}
+function syncFrom(tx,b){const o0=b.text;b.text=tx.textContent;if(b.text!==(o0||'')){b.ed=Date.now();const r=tx.closest&&tx.closest('.row'),d=r&&r.querySelector('.edd');if(d){d.textContent=fmtDate(b.ed).slice(0,10);d.title='Editada pela última vez em '+new Date(b.ed).toLocaleString('pt-PT')}}const h=clean(tx.innerHTML);if(b.text&&hasFmt(h))b.html=h;else delete b.html;if(!b.createdAt&&b.text.trim())b.createdAt=Date.now()}
 function setTxt(tx,b){if(b.html)tx.innerHTML=clean(b.html);else tx.textContent=b.text}
 function fmt(cmd){
  if(cmd==='mark'){const sel=getSelection();if(sel.isCollapsed)return;document.execCommand('styleWithCSS',false,true);
@@ -904,7 +929,8 @@ const SHR_TXT={owner:'Partilhada por ti',edit:'Partilhada contigo · podes edita
 function shrHTML(id,what){if(!id)return'';const d=DOCS.get(id);if(!d||(d.own&&!d.shared))return'';const r=d.own?'owner':(d.role||'view');
  const t=d.own?SHR_TXT.owner+' — clica para gerir':SHR_TXT[r].replace('contigo','contigo por '+(d.ownerEmail||'outra conta'));
  return `<span class="shr r-${r}" data-doc="${id}" title="${esc(t)}">${SHR_SVG}</span>`}
-function renderSide(){
+var PO=[];
+function renderSide(){PO=pageOrder();
  const nav=$('#pages');nav.innerHTML='';const cp=curPage(),ct=curTab();
  const list=[];sideTop().forEach(k=>{if(k[0]==='f'){const f=findFolder(k.slice(2));list.push(f);if(f.open||folderPages(f.id).includes(cp))folderPages(f.id).forEach(p=>list.push({inF:true,p}))}else{const p=findPage(k.slice(2));if(p)list.push(p)}});
  list.forEach(p=>{
@@ -918,7 +944,7 @@ function renderSide(){
   const sd=p._virtual?p.tabs[0]&&p.tabs[0]._doc:p._doc;
   it.title=pOpen&&p===cp?'Clica para recolher as secções':'';
   it.innerHTML=`${icoHTML(p.icon,p._virtual?ICON.tab:ICON.page)}<span class="name"></span>${shrHTML(sd,p._virtual?'secção':'página')}<button class="dots" title="Opções da página">${ICON.more}</button>`;
-  it.querySelector('.name').textContent=(p._virtual&&p.tabs[0]?p.tabs[0].title:p.title)||'Sem título';nav.append(it);
+  it.querySelector('.name').textContent=(p._virtual&&p.tabs[0]?p.tabs[0].title:p.title)||'Sem título';{const k=PO.indexOf(p);if(k>=0&&k<9){const n=el('span','pnum');n.textContent=k+1;it.prepend(n)}}nav.append(it);
   if(!pOpen)return;
   const box=el('div','tabs'+(inF?' infolder':''));
   const td=collectTodo(p);
@@ -951,6 +977,7 @@ function rowEl(b,depth,doneView){
  r.append(tx);
  if(doneView&&b.done&&b.doneAt){const w=el('span','when');w.textContent=fmtDate(b.doneAt);w.title='Concluída em '+new Date(b.doneAt).toLocaleString('pt-PT');r.append(w)}
  if(!doneView&&b.type==='task'){const rb=remBadge(b.id);if(rb)r.append(rb)}
+ if(!doneView&&S.ui.edOn&&b.type==='task'){const ts=b.ed||b.createdAt;if(ts){const d=el('span','edd');d.textContent=fmtDate(ts).slice(0,10);d.title='Editada pela última vez em '+new Date(ts).toLocaleString('pt-PT')+(b.ed?'':' (data de criação)');r.append(d,el('span','edl'))}}
  if(!doneView||b.done){const cb=commentBtn(b.id);if(cb)r.append(cb)}
  const m=el('button','more');m.innerHTML=ICON.more;m.title='Opções';r.append(m);
  return r;
@@ -970,8 +997,18 @@ function renderDoc(){
  if(document.activeElement!==TT||TT.textContent==='Por fazer')TT.textContent=t.title;
  document.title=(t.title||'Checklist')+' · '+(p.title||'Checklist');
  const B=$('#blocks');B.innerHTML='';visible=[];
- (function w(arr,d){for(const b of arr){if(b.type==='task'&&b.done)continue;if(isOverdue(b,p,t))continue;B.append(rowEl(b,d,false));visible.push(b.id);if(b.type==='task')w(b.children,d+1)}})(t.blocks,0);
- if(!visible.length){const e=el('div','empty');e.textContent='Sem tarefas por fazer. Clica aqui para começar a escrever.';e.onclick=()=>addBlock('task');B.append(e)}
+ const F=edFilter();
+ if(!F)(function w(arr,d){for(const b of arr){if(b.type==='task'&&b.done)continue;if(isOverdue(b,p,t))continue;B.append(rowEl(b,d,false));visible.push(b.id);if(b.type==='task')w(b.children,d+1)}})(t.blocks,0);
+ else{const act=document.activeElement&&document.activeElement.closest&&document.activeElement.closest('.row');const keep=act&&act.dataset.id;
+  const list=[];(function w(arr,d,anc){for(const b of arr){if(b.type==='task'&&b.done)continue;if(isOverdue(b,p,t))continue;
+    const hit=b.type==='task'&&(F(b.ed||b.createdAt)||!(b.text||'').trim()||b.id===keep);list.push({b,d,anc,hit});if(b.type==='task')w(b.children,d+1,[...anc,b.id])}})(t.blocks,0,[]);
+  const ctx=new Set();list.forEach(x=>{if(x.hit)x.anc.forEach(a=>ctx.add(a))});
+  let head=[];const show=new Set();list.forEach((x,i)=>{if(x.b.type==='h1'||x.b.type==='h2'){head=x.b.type==='h1'?[x]:[...head.filter(h=>h.b.type==='h1'),x];x.heads=null}else x.heads=head.slice();});
+  list.forEach(x=>{if(x.hit||ctx.has(x.b.id)){show.add(x.b.id);(x.heads||[]).forEach(h=>show.add(h.b.id))}});
+  let n=0;list.forEach(x=>{if(!show.has(x.b.id))return;const r=rowEl(x.b,x.d,false);if(!x.hit)r.classList.add('ed-ctx');else if(x.b.type==='task')n++;B.append(r);visible.push(x.b.id)});
+  const ch=el('div','ed-chip');ch.innerHTML=`<span>Filtro: ${esc(edFLabel())} · ${n} tarefa${n===1?'':'s'}</span><button title="Tirar o filtro">✕</button>`;ch.querySelector('button').onclick=()=>setEdF(null);B.prepend(ch)}
+ if(!visible.length&&F){const e=el('div','empty');e.textContent='Nenhuma tarefa editada nesse período.';B.append(e)}
+ else if(!visible.length){const e=el('div','empty');e.textContent='Sem tarefas por fazer. Clica aqui para começar a escrever.';e.onclick=()=>addBlock('task');B.append(e)}
  const line=el('div');line.id='dropLine';line.hidden=true;B.append(line);
  renderProgress();renderDone();
  if(CP&&CP.doc!==CUR_DOC)closeCP();else if(CP){const rw=document.querySelector(`#blocks .row[data-id="${CP.bid}"]`);if(rw)rw.classList.add('c-on')}
@@ -1060,7 +1097,7 @@ function moveSibling(id,dir){
  const pos=curCaret(id);L.arr.splice(L.i,1);L.arr.splice(j,0,L.b);save();renderAll();focusB(id,pos);
 }
 function setType(id,type){
- const L=locate(id);if(!L||L.b.type===type)return;const b=L.b;
+ const L=locate(id);if(!L||L.b.type===type)return;const b=L.b;b.ed=Date.now();
  if(type!=='task'){
   const ti=topIndexOf(id);
   if(b.children.length){L.arr.splice(L.i+1,0,...b.children);b.children=[]}
@@ -2580,6 +2617,7 @@ const SK=[
  {id:'edit2',k:'Enter',l:'Editar a linha',c:{sel:4}},
  {id:'esc2',k:'Esc',l:'Limpar a seleção',c:{sel:3}},
  {id:'search',k:'Ctrl+K',l:'Pesquisar em tudo',c:{idle:9,nav:4}},
+ {id:'edd',k:'Ctrl+Alt+D',l:'Datas de edição',c:{idle:3}},
  {id:'quick',k:'Alt+N',l:'Tarefa rápida',c:{idle:8}},
  {id:'page',k:'Alt+1…9',l:'Ir para a página (repetir: secções)',c:{idle:7,nav:3}},
  {id:'sec',k:'Alt+↑↓',l:'Secção anterior/seguinte',c:{idle:6,nav:2}},
@@ -2630,6 +2668,7 @@ function sugHit(e){ // regista o atalho usado (antes dos outros handlers)
   else if(ctx==='sel'&&mod&&k.toLowerCase()==='c')id='copy';
   else if(ctx==='sel'&&(k==='Delete'||k==='Backspace'))id='del';
   else if(mod&&k.toLowerCase()==='k')id='search';
+  else if(mod&&e.altKey&&e.code==='KeyD')id='edd';
   else if(e.altKey&&!mod&&e.code==='KeyN')id='quick';
   else if(e.altKey&&!mod&&/^Digit[1-9]$/.test(e.code))id='page';
   else if(e.altKey&&!mod&&!e.shiftKey&&(k==='ArrowUp'||k==='ArrowDown'))id='sec';
@@ -2642,6 +2681,47 @@ setInterval(()=>{if(S.ui.sug)sugUpdate()},1500);
 $('#sugOn').checked=!!S.ui.sug;
 $('#sugOn').onchange=e=>{S.ui.sug=e.target.checked;try{localStorage.setItem(KEY,JSON.stringify(S))}catch(x){}sugUpdate()};
 $('#sugX').onclick=()=>{S.ui.sug=false;$('#sugOn').checked=false;try{localStorage.setItem(KEY,JSON.stringify(S))}catch(x){}sugUpdate();toast('Atalhos sugeridos desligados (liga-os outra vez em Atalhos)')};
+
+/* =========================================================
+   DATA DA ÚLTIMA EDIÇÃO + FILTRO
+   ========================================================= */
+const ED_OPTS=[['today','Hoje'],['yest','Ontem'],['7','Últimos 7 dias'],['30','Últimos 30 dias'],['old30','Mais antigas que 30 dias']];
+function dayStart(d){const x=new Date(d);x.setHours(0,0,0,0);return x.getTime()}
+function edFilter(){const f=S.ui.edOn&&S.ui.edF;if(!f)return null;const t0=dayStart(Date.now()),D=864e5;
+ if(f.k==='today')return ts=>ts>=t0;
+ if(f.k==='yest')return ts=>ts>=t0-D&&ts<t0;
+ if(f.k==='7')return ts=>ts>=t0-6*D;
+ if(f.k==='30')return ts=>ts>=t0-29*D;
+ if(f.k==='old30')return ts=>!!ts&&ts<t0-29*D;
+ if(f.k==='range'){const a=f.from?dayStart(f.from+'T00:00'):-Infinity,b=f.to?dayStart(f.to+'T00:00')+D:Infinity;return ts=>!!ts&&ts>=a&&ts<b}
+ return null}
+function edFLabel(){const f=S.ui.edF;if(!f)return'';if(f.k==='range'){const fm=x=>x?x.split('-').reverse().join('/'):'…';return'de '+fm(f.from)+' até '+fm(f.to)}return(ED_OPTS.find(o=>o[0]===f.k)||['',''])[1]}
+function edPersist(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function setEdF(f){S.ui.edF=f;edPersist();renderAll();edUI()}
+function setEdOn(v){S.ui.edOn=!!v;if(!v)S.ui.edF=null;edPersist();renderAll();edUI();toast(v?'Datas de edição visíveis (Ctrl+Alt+D para esconder)':'Datas de edição escondidas')}
+function edUI(){const b=$('#edFBtn');b.hidden=!S.ui.edOn;b.classList.toggle('on',!!S.ui.edF);b.title=S.ui.edF?'Filtro: '+edFLabel():'Filtrar por data de edição';$('#edOn').checked=!!S.ui.edOn;edLayout()}
+function edLayout(){const d=$('.doc'),m=$('#main');if(!d||!m)return;document.body.classList.toggle('ed-inline',d.getBoundingClientRect().left-m.getBoundingClientRect().left<96)}
+try{new ResizeObserver(edLayout).observe($('#main'))}catch(e){addEventListener('resize',edLayout)}
+$('#edOn').onchange=e=>setEdOn(e.target.checked);
+$('#edFBtn').onclick=e=>{const f=S.ui.edF;menu(e.currentTarget,[
+ {label:(!f?'✓ ':'   ')+'Todas as datas',fn:()=>setEdF(null)},'-',
+ ...ED_OPTS.map(([k,l])=>({label:(f&&f.k===k?'✓ ':'   ')+l,fn:()=>setEdF({k})})),
+ {label:(f&&f.k==='range'?'✓ ':'   ')+'De… até…',fn:()=>{const D=$('#edRange');const n=new Date(),z=x=>String(x).padStart(2,'0'),td=`${n.getFullYear()}-${z(n.getMonth()+1)}-${z(n.getDate())}`;$('#edFrom').value=f&&f.from||td;$('#edTo').value=f&&f.to||td;D.showModal()}},
+ '-',{label:'Esconder as datas',fn:()=>setEdOn(false)}])};
+$('#edRangeOk').onclick=()=>{const a=$('#edFrom').value,b=$('#edTo').value;if(!a&&!b){toast('Escolhe pelo menos uma data');return}$('#edRange').close();setEdF({k:'range',from:a&&b&&a>b?b:a,to:a&&b&&a>b?a:b})};
+document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.altKey&&!e.shiftKey&&e.code==='KeyD'){if(document.querySelector('dialog[open]'))return;e.preventDefault();e.stopPropagation();setEdOn(!S.ui.edOn)}},true);
+edUI();
+
+/* =========================================================
+   ALT PREMIDO: números das páginas
+   ========================================================= */
+var altT=null,altShown=false;
+function altOff(){clearTimeout(altT);altT=null;if(altShown){altShown=false;document.body.classList.remove('alt-nums')}}
+addEventListener('keydown',e=>{
+ if(e.key==='Alt'&&!e.ctrlKey&&!e.metaKey&&!e.shiftKey){if(!e.repeat&&!altT&&!altShown)altT=setTimeout(()=>{altT=null;altShown=true;document.body.classList.add('alt-nums')},350);return}
+ if(!e.altKey)altOff();else{clearTimeout(altT);altT=null}},true);
+addEventListener('keyup',e=>{if(e.key==='Alt'){if(altShown)e.preventDefault();altOff()}},true);
+addEventListener('blur',altOff);document.addEventListener('visibilitychange',altOff);
 
 remInit();
 initCloud();

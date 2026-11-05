@@ -1,5 +1,10 @@
 # Checklist — PATCH NOTES
 
+## v0.14 — 2026-11-05
+- **Manter Alt premido** (cerca de meio segundo) mostra o número de cada página na barra lateral, o mesmo usado em Alt+1…9.
+- **Data da última edição** (Definições → Geral, ou Ctrl+Alt+D): mostra à esquerda de cada tarefa, fora da folha e com um tracejado até à caixa, a data em que o texto ou o tipo da linha foi alterado pela última vez. Formatação, cores, concluir e mover não contam. As tarefas antigas mostram a data de criação. Em ecrãs estreitos a data aparece à direita da tarefa. A hora exata aparece ao passar o rato. Fica guardado em cada dispositivo.
+- **Filtro por data de edição**: ícone de filtro no topo (só aparece com as datas visíveis). Opções: Hoje, Ontem, Últimos 7 dias, Últimos 30 dias, Mais antigas que 30 dias e De… até…. Mostra só as tarefas que batem, com os títulos e tarefas-mãe a cinzento como contexto, e uma etiqueta com o número de tarefas e ✕ para tirar o filtro.
+
 ## v0.13 — 2026-11-05
 - **Barra lateral**:
   - A seta ao lado das páginas foi retirada. Clicar no nome de uma página abre-a; se já estiver aberta, recolhe ou mostra as secções.
