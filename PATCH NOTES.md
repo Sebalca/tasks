@@ -1,5 +1,21 @@
 # Checklist — PATCH NOTES
 
+## v0.13 — 2026-11-05
+- **Barra lateral**:
+  - A seta ao lado das páginas foi retirada. Clicar no nome de uma página abre-a; se já estiver aberta, recolhe ou mostra as secções.
+  - O ícone de partilha passa a ter cor conforme o tipo: verde = partilhada por ti (clicar abre a partilha); azul = contigo, podes editar; laranja = podes comentar; cinzento = só ver. Nas partilhas recebidas, clicar no ícone mostra quem partilhou e permite sair da partilha.
+  - O grupo “Partilhadas comigo” desaparece. As páginas recebidas ficam na lista normal: dá para as ordenar (arrastar ou ⋮ → Mover) e pô-las em pastas. Cada secção recebida sozinha aparece como uma página própria.
+- **Índice de títulos**: clicar num título leva-o para o topo do ecrã (e não para o meio).
+- **Alt+1…9**: se já estiveres nessa página, passa para a secção seguinte e volta à primeira no fim.
+- **Atalhos sugeridos** (Atalhos → “Mostrar atalhos sugeridos”): caixa por baixo do botão da conta com até 5 atalhos. Muda conforme o contexto (a escrever, linha vazia, título, texto selecionado, linhas selecionadas, modo páginas, navegar) e dá prioridade aos atalhos que mais usas. Só no computador; a definição fica guardada em cada dispositivo. ✕ desliga.
+- **Partilha por secção**:
+  - Numa página partilhada, cada secção pode deixar de ser partilhada, no diálogo de partilha (“Secções partilhadas”) ou no menu ⋮ da secção.
+  - A secção fica com 🔒 e só tu a vês: o conteúdo sai da cópia partilhada e fica apenas na tua conta, sincronizado entre os teus dispositivos.
+  - As secções novas ficam partilhadas.
+  - Clicar no 🔒 volta a partilhar.
+  - Tem de ficar pelo menos uma secção partilhada.
+- Correção: o Esc durante a escrita voltou a selecionar a linha. Antes, a seleção era desfeita logo a seguir.
+
 ## v0.12 — 2026-11-04
 - **Recolher páginas**: seta ▾ ao lado de cada página na barra lateral esconde ou mostra as secções. Também dá para abrir as secções de outra página sem sair da atual. No modo páginas (Ctrl+←), ←/→ fazem o mesmo. O estado fica guardado neste dispositivo.
 - **Índice de títulos**: clicar na secção que já está aberta mostra, por baixo dela, os títulos e subtítulos da secção. Clicar num título leva até ele; clicar outra vez na secção esconde o índice.
