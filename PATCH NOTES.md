@@ -1,5 +1,9 @@
 # Checklist — PATCH NOTES
 
+## v0.14e — 2026-11-09
+- **↓ a escrever**: na última linha do texto, a seta para baixo passa logo para o início da linha seguinte, sem ter de ir primeiro ao fim do texto. Em textos com várias linhas, desce dentro do texto até à última linha.
+- **Manter Alt premido** (também a escrever) mostra a barra lateral, se estiver escondida, enquanto o Alt estiver premido, com os números das páginas. Ao largar, volta a esconder-se.
+
 ## v0.14d — 2026-11-09
 - **Esc a escrever** sai da escrita e vai direto para o modo páginas (barra lateral).
 - **F2 no modo páginas** volta ao modo linhas (tal como Esc e Ctrl+→).
