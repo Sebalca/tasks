@@ -571,6 +571,7 @@ body.alt-nums .pnum{display:inline-block}
     <tr><td><kbd>↑</kbd> / <kbd>↓</kbd></td><td>Passar para a tarefa anterior/seguinte</td></tr>
     <tr><td><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>↑</kbd> / <kbd>↓</kbd></td><td>Mover a tarefa para cima/baixo (também <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>↑</kbd>/<kbd>↓</kbd>)</td></tr>
     <tr><td><kbd>---</kbd></td><td>Numa linha vazia, escrever --- cria um separador</td></tr>
+    <tr><td><kbd>Esc</kbd></td><td>A escrever: vai direto para o modo <b>páginas</b> (barra lateral)</td></tr>
     <tr><td><kbd>F2</kbd></td><td>A escrever: sai da escrita e seleciona a linha. Com a linha selecionada: volta a escrever nela (cursor no fim)</td></tr>
     <tr><td><kbd>Ctrl</kbd>+<kbd>Z</kbd></td><td>Desfazer (texto, tarefas apagadas, movidas, concluídas…)</td></tr>
     <tr><td><kbd>Ctrl</kbd>+<kbd>Y</kbd> / <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Z</kbd></td><td>Refazer</td></tr>
@@ -578,7 +579,7 @@ body.alt-nums .pnum{display:inline-block}
     <tr><td><kbd>Alt</kbd>+<kbd>1</kbd>…<kbd>9</kbd></td><td>Ir para a 1.ª…9.ª página (pela ordem da barra lateral). Se já estiveres nessa página, passa para a secção seguinte (e volta à primeira no fim)</td></tr>
     <tr><td><kbd>Alt</kbd>+<kbd>↑</kbd> / <kbd>↓</kbd></td><td>Secção anterior/seguinte (passa para a página anterior/seguinte no fim)</td></tr>
     <tr><td><kbd>↑</kbd> / <kbd>↓</kbd> sem nada selecionado</td><td>Scroll da página</td></tr>
-    <tr><td><kbd>F2</kbd></td><td>Sem nada selecionado: entra no modo <b>linhas</b> e seleciona a primeira linha visível; <kbd>↑</kbd>/<kbd>↓</kbd> movem a seleção, <kbd>F2</kbd> escreve, <kbd>Esc</kbd> sai</td></tr>
+    <tr><td><kbd>F2</kbd></td><td>Sem nada selecionado (ou no modo páginas): entra no modo <b>linhas</b> e seleciona a linha a cerca de 1/3 do topo do ecrã; <kbd>↑</kbd>/<kbd>↓</kbd> movem a seleção, <kbd>F2</kbd> escreve, <kbd>Esc</kbd> sai</td></tr>
     <tr><td><kbd>Ctrl</kbd>+<kbd>←</kbd></td><td>Modo <b>páginas</b> (barra lateral): <kbd>↑</kbd>/<kbd>↓</kbd> percorrem páginas, pastas e secções, <kbd>Enter</kbd> abre, <kbd>←</kbd>/<kbd>→</kbd> fecham/abrem pastas</td></tr>
     <tr><td><kbd>Ctrl</kbd>+<kbd>→</kbd></td><td>Voltar ao modo linhas</td></tr>
     <tr><td>Manter <kbd>Alt</kbd> premido</td><td>Mostra o número de cada página (para usar com <kbd>Alt</kbd>+<kbd>1</kbd>…<kbd>9</kbd>)</td></tr>
@@ -705,7 +706,7 @@ body.alt-nums .pnum{display:inline-block}
 (()=>{
 'use strict';
 /* =========================================================
-   Checklist v0.14c — dados em localStorage.
+   Checklist v0.14d — dados em localStorage.
    Estrutura pronta para Supabase (user_site_data:
    site_id 'checklist', chave 'data', valor = objeto S).
    ========================================================= */
@@ -1352,6 +1353,7 @@ B.addEventListener('keydown',e=>{
  if(e.shiftKey&&(e.altKey||mod)&&(e.key==='ArrowUp'||e.key==='ArrowDown')){e.preventDefault();moveSibling(id,e.key==='ArrowUp'?-1:1);return}
  if(e.key==='ArrowUp'&&col&&pos===0){let k=visible.indexOf(id)-1;while(k>=0&&!txtOf(visible[k]))k--;if(k>=0){e.preventDefault();focusB(visible[k])}return}
  if(e.key==='ArrowDown'&&col&&pos===len){let k=visible.indexOf(id)+1;while(k<visible.length&&!txtOf(visible[k]))k++;if(k<visible.length){e.preventDefault();focusB(visible[k],0)}return}
+ if(e.key==='Escape'){e.preventDefault();e.stopPropagation();getSelection().removeAllRanges();enterNav();return}
  if(e.key==='F2'&&!mod){e.preventDefault();e.stopPropagation();tx.blur();getSelection().removeAllRanges();SEL=new Set([id]);selAnchor=selHead=id;applySel()}
 });
 B.addEventListener('paste',e=>{
@@ -1462,7 +1464,7 @@ document.addEventListener('keydown',e=>{
 /* ---------- navegação: Alt+n, Alt+setas, modos linhas/páginas ---------- */
 var NAVMODE=false;
 function modePill(){const p=$('#modePill');if(!p)return;
- if(NAVMODE){p.innerHTML='<b>Modo páginas</b> · ↑↓ percorrer · Enter abrir · ←→ pastas · Ctrl+→ linhas';p.hidden=false}
+ if(NAVMODE){p.innerHTML='<b>Modo páginas</b> · ↑↓ percorrer · Enter abrir · ←→ pastas · F2 linhas';p.hidden=false}
  else if(SEL.size&&!BS){p.innerHTML='<b>Modo linhas</b> · ↑↓ mover · Shift+↑↓ alargar · F2 escrever · Esc sair · Ctrl+← páginas';p.hidden=false}
  else p.hidden=true}
 function goPage(p,tabIdx){if(!p)return;if(S.ui.pgOpen&&S.ui.pgOpen[p.id]===false)delete S.ui.pgOpen[p.id];if(pf(p)){const f=findFolder(pf(p));if(f)f.open=true}const t=tabIdx==='last'?p.tabs[p.tabs.length-1]:p.tabs[0];S.cur={page:p.id,tab:t.id};SEL.clear();save();renderAll();$('#main').scrollTop=0}
@@ -1477,7 +1479,7 @@ function navFocus(it){NAV.querySelectorAll('.kfocus').forEach(x=>x.classList.rem
 function enterNav(){NAVMODE=true;clearSel();const a=document.activeElement;if(a&&a.blur)a.blur();if(mq.matches)document.body.classList.add('side-open');else document.body.classList.remove('side-closed');
  navFocus(NAV.querySelector('.item.tab.active')||NAV.querySelector('.item.page.active')||navItems()[0]);modePill()}
 function exitNav(toLines){NAVMODE=false;navFocus(null);closeSideMobile();if(toLines)selectFirstVisible();modePill()}
-function selectFirstVisible(){const M=$('#main').getBoundingClientRect();const r=[...B.querySelectorAll('.row')].find(x=>x.getBoundingClientRect().bottom>M.top+60);if(!r)return;const id=r.dataset.id;SEL=new Set([id]);selAnchor=selHead=id;applySel()}
+function selectFirstVisible(){const M=$('#main').getBoundingClientRect(),y=M.top+Math.max(60,(M.bottom-M.top)/3),rows=[...B.querySelectorAll('.row')];const r=rows.find(x=>x.getBoundingClientRect().bottom>y)||rows.reverse().find(x=>x.getBoundingClientRect().top<M.bottom);if(!r)return;const id=r.dataset.id;SEL=new Set([id]);selAnchor=selHead=id;applySel()}
 document.addEventListener('keydown',e=>{
  if(document.querySelector('dialog[open]')||menuEl||!$('#lightbox').hidden)return;
  const mod=e.ctrlKey||e.metaKey;
@@ -1492,7 +1494,7 @@ document.addEventListener('keydown',e=>{
    const again=[...NAV.querySelectorAll('.item')].find(x=>(x.dataset.folder?'f'+x.dataset.folder:x.dataset.tab?'t'+x.dataset.tab:x.dataset.todo?'todo':'p'+x.dataset.page)===key);navFocus(again);NAVMODE=true;modePill();return}
   if(cur&&cur.dataset.page&&!cur.dataset.tab&&!cur.dataset.todo&&(e.key==='ArrowRight'||e.key==='ArrowLeft')&&!mod){e.preventDefault();const P=findPage(cur.dataset.page);setPageOpen(P,e.key==='ArrowRight');navFocus(NAV.querySelector(`.item.page[data-page="${P.id}"]`));return}
   if(cur&&cur.dataset.folder&&(e.key==='ArrowRight'||e.key==='ArrowLeft')&&!mod){e.preventDefault();const f=findFolder(cur.dataset.folder);f.open=e.key==='ArrowRight';save();renderSide();navFocus(NAV.querySelector(`.item[data-folder="${f.id}"]`));return}
-  if((mod&&e.key==='ArrowRight')||e.key==='Escape'){e.preventDefault();e.stopPropagation();exitNav(true);return}
+  if((mod&&e.key==='ArrowRight')||e.key==='Escape'||e.key==='F2'){e.preventDefault();e.stopPropagation();exitNav(true);return}
   return;
  }
  if(editing())return;
@@ -2624,12 +2626,13 @@ const SK=[
  {id:'quick',k:'Alt+N',l:'Tarefa rápida',c:{idle:8}},
  {id:'page',k:'Alt+1…9',l:'Ir para a página (repetir: secções)',c:{idle:7,nav:3}},
  {id:'sec',k:'Alt+↑↓',l:'Secção anterior/seguinte',c:{idle:6,nav:2}},
+ {id:'escnav',k:'Esc',l:'Ir para o modo páginas',c:{edit:2,head:2,empty:2}},
  {id:'lines',k:'F2',l:'Modo linhas (teclado)',c:{idle:5}},
  {id:'pages',k:'Ctrl+←',l:'Modo páginas (barra lateral)',c:{idle:4}},
  {id:'navud',k:'↑↓',l:'Percorrer páginas e secções',c:{nav:9}},
  {id:'navent',k:'Enter',l:'Abrir',c:{nav:8}},
  {id:'navlr',k:'← →',l:'Recolher/mostrar',c:{nav:6}},
- {id:'navback',k:'Ctrl+→',l:'Voltar às linhas',c:{nav:5}},
+ {id:'navback',k:'F2',l:'Voltar às linhas',c:{nav:5}},
 ];
 const MAC=/Mac|iPhone|iPad/.test(navigator.platform||'');
 function sugCtx(){
@@ -2655,14 +2658,14 @@ function sugUpdate(){cancelAnimationFrame(sugRaf);sugRaf=requestAnimationFrame((
 function sugHit(e){ // regista o atalho usado (antes dos outros handlers)
  if(!S.ui.sug)return;const mod=e.ctrlKey||e.metaKey,k=e.key,ctx=sugCtx();let id=null;
  if(document.querySelector('dialog[open]'))return;
- if(ctx==='nav'){if(k==='ArrowUp'||k==='ArrowDown')id='navud';else if(k==='Enter')id='navent';else if(mod&&k==='ArrowRight')id='navback';else if(k==='ArrowLeft'||k==='ArrowRight')id='navlr'}
+ if(ctx==='nav'){if(k==='ArrowUp'||k==='ArrowDown')id='navud';else if(k==='Enter')id='navent';else if((mod&&k==='ArrowRight')||k==='F2')id='navback';else if(k==='ArrowLeft'||k==='ArrowRight')id='navlr'}
  if(!id){
   if(mod&&k==='Enter')id=e.shiftKey?(ctx==='sel'?'swork':'work'):(ctx==='sel'?'sdone':'done');
   else if(k==='F2'&&!mod)id=ctx==='sel'?'edit2':ctx==='idle'?'lines':'esc';
   else if(k==='Enter'&&!mod&&!e.shiftKey&&!e.altKey)id=ctx==='sel'?null:(ctx==='edit'||ctx==='head'||ctx==='empty')?'enter':null;
   else if(k==='Tab')id=ctx==='sel'?'stabs':e.shiftKey?'stab':'tab';
   else if((mod||e.altKey)&&e.shiftKey&&(k==='ArrowUp'||k==='ArrowDown'))id='move';
-  else if(k==='Escape')id=ctx==='sel'?'esc2':null;
+  else if(k==='Escape')id=ctx==='sel'?'esc2':(ctx==='edit'||ctx==='head'||ctx==='empty')?'escnav':null;
   else if(mod&&!e.shiftKey&&k.toLowerCase()==='z')id='undo';
   else if(mod&&e.altKey&&/^Digit[012]$/.test(e.code))id={Digit1:'h1',Digit2:'h2',Digit0:'task'}[e.code];
   else if(mod&&!e.shiftKey&&!e.altKey&&/^[biu]$/i.test(k))id={b:'bold',i:'ital',u:'under'}[k.toLowerCase()];
