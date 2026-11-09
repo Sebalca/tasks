@@ -1,5 +1,9 @@
 # Checklist — PATCH NOTES
 
+## v0.14c — 2026-11-09
+- **F2 alterna entre escrever e selecionar**: a escrever, F2 sai da escrita e seleciona a linha; com uma linha selecionada, F2 volta a escrever nela (cursor no fim); sem nada selecionado, F2 entra no modo linhas (primeira linha visível).
+- O **Esc** deixa de selecionar a linha (a escrever ou sem nada selecionado) e o **Enter** deixa de passar a linha selecionada para escrita. O Esc continua a limpar a seleção, a fechar janelas e a sair do modo páginas.
+
 ## v0.14b — 2026-11-09
 - **F2** com uma linha selecionada (por exemplo, depois de Esc) passa a escrever nessa linha, com o cursor no fim. O Enter continua a fazer o mesmo.
 
