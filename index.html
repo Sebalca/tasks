@@ -707,7 +707,7 @@ body.alt-nums .pnum{display:inline-block}
 (()=>{
 'use strict';
 /* =========================================================
-   Checklist v0.14e — dados em localStorage.
+   Checklist v0.14f — dados em localStorage.
    Estrutura pronta para Supabase (user_site_data:
    site_id 'checklist', chave 'data', valor = objeto S).
    ========================================================= */
@@ -1367,14 +1367,19 @@ B.addEventListener('paste',e=>{
  if(files.length){const id=tx.parentNode.dataset.id;files.forEach(f=>addImage(f,id));return}
  const raw=cd.getData('text/plain')||'';
  if(/^\s*https?:\/\/\S+\s*$/i.test(raw)){pasteLink(tx,raw.trim());return}
- const lines=raw.replace(/\r/g,'').split('\n').map(s=>{const m=s.match(/^\s*(?:[-*•]\s+)?(\[\s?\]|\[[xX]\]|☐|☑|✓|✔)?\s*(.*)$/);return{t:m[2].trimEnd(),done:!!m[1]&&/[xX☑✓✔]/.test(m[1])}});
+ const lines=raw.replace(/\r/g,'').split('\n').map(s=>{const ws=(s.match(/^[ \t\u00a0]*/)||[''])[0];const w=[...ws].reduce((a,c)=>a+(c==='\t'?4:1),0);const m=s.match(/^\s*(?:[-*•·◦▪§]\s+)?(\[\s?\]|\[[xX]\]|☐|☑|✓|✔)?\s*(.*)$/);return{t:m[2].trimEnd(),w,done:!!m[1]&&/[xX☑✓✔]/.test(m[1])}});
+ {const ws=[...new Set(lines.filter(l=>l.t).map(l=>l.w))].sort((a,b)=>a-b);lines.forEach(l=>l.lv=Math.max(0,ws.indexOf(l.w)))}
  const list=lines.length>1?lines.filter(l=>l.t):lines;
  if(!list.length)return;
  document.execCommand('insertText',false,list[0].t);
  if(list.length===1)return;
  const id=tx.parentNode.dataset.id,L=locate(id);syncFrom(tx,L.b);
- const news=list.slice(1).map(l=>{const n=nb('task',l.t);if(l.done){n.done=true;n.doneAt=Date.now()}return n});
- if(L.b.type==='task'&&L.b.children.some(isOpenTask))L.b.children.unshift(...news);else L.arr.splice(L.i+1,0,...news);
+ const news=[],roots=[],kids=[],stack=[{lv:list[0].lv,b:L.b}];
+ list.slice(1).forEach(l=>{const n=nb('task',l.t);if(l.done){n.done=true;n.doneAt=Date.now()}news.push(n);
+  while(stack.length&&stack[stack.length-1].lv>=l.lv)stack.pop();const par=stack.length?stack[stack.length-1].b:null;
+  if(par&&par.type==='task'){if(par===L.b)kids.push(n);else par.children.push(n)}else roots.push(n);stack.push({lv:l.lv,b:n})});
+ if(kids.length)L.b.children.unshift(...kids);
+ if(roots.length){if(L.b.type==='task'&&!kids.length&&L.b.children.some(isOpenTask))L.b.children.unshift(...roots);else L.arr.splice(L.i+1,0,...roots)}
  save();renderAll();const lastOpen=[...news].reverse().find(n=>!n.done);focusB(lastOpen?lastOpen.id:id);
 });
 B.addEventListener('change',e=>{if(e.target.matches('.cb'))toggleUI(e.target.parentNode.dataset.id)});
@@ -1412,12 +1417,25 @@ WL.addEventListener('click',e=>{const x=e.target.closest('.t');if(!x)return;cons
 /* premir longo na caixa = em curso */
 /* ---------- copiar ---------- */
 function rowsText(ids){return ids.map(id=>{const L=locate(id);if(!L)return'';if(L.b.type==='hr')return '---';const r=B.querySelector(`.row[data-id="${id}"]`);const d=r?+r.style.getPropertyValue('--d')||0:0;return '  '.repeat(d)+L.b.text}).join('\n')}
-function copyText(t){
+function rowsHTML(ids){ // listas com marcadores encaixadas (Word, Google Docs, email…)
+ let h='',open=-1;const close=to=>{while(open>to){h+='</li></ul>';open--}};
+ ids.forEach(id=>{const L=locate(id);if(!L)return;const b=L.b,r=B.querySelector(`.row[data-id="${id}"]`);const d=r?+r.style.getPropertyValue('--d')||0:0;
+  const inner=b.html||esc(b.text||'');
+  if(b.type==='hr'){close(-1);h+='<hr>';return}
+  if(b.type==='img'){close(-1);if(b.src)h+=`<p><img src="${esc(b.src)}" style="max-width:480px"></p>`;return}
+  if(b.type==='h1'||b.type==='h2'){close(-1);h+=b.type==='h1'?`<h2>${inner}</h2>`:`<h3>${inner}</h3>`;return}
+  if(d>open){while(open<d){h+='<ul>'+(open+1<d?'<li style="list-style:none">':'');open++}h+='<li>'}
+  else{close(d);h+='</li><li>'}
+  h+=b.done?`<s>${inner}</s>`:inner});
+ close(-1);return '<meta charset="utf-8">'+h}
+function copyText(t,html){
  const ok=()=>toast('Copiado');
- const fb=()=>{const a=el('textarea');a.value=t;a.style.cssText='position:fixed;opacity:0';document.body.append(a);a.select();try{document.execCommand('copy');ok()}catch(e){toast('Não foi possível copiar')}a.remove()};
+ const fb=()=>{const on=e=>{e.preventDefault();e.clipboardData.setData('text/plain',t);if(html)e.clipboardData.setData('text/html',html)};document.addEventListener('copy',on,true);
+  const a=el('textarea');a.value=t;a.style.cssText='position:fixed;opacity:0';document.body.append(a);a.select();try{document.execCommand('copy');ok()}catch(e){toast('Não foi possível copiar')}a.remove();document.removeEventListener('copy',on,true)};
+ if(html&&window.ClipboardItem&&navigator.clipboard&&navigator.clipboard.write){navigator.clipboard.write([new ClipboardItem({'text/plain':new Blob([t],{type:'text/plain'}),'text/html':new Blob([html],{type:'text/html'})})]).then(ok,fb);return}
  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(ok,fb);else fb();
 }
-function copyRows(ids){ids=ids||visible.filter(x=>SEL.has(x));if(ids.length)copyText(ids.length===1?(locate(ids[0])||{b:{text:''}}).b.text:rowsText(ids))}
+function copyRows(ids){ids=ids||visible.filter(x=>SEL.has(x));if(!ids.length)return;if(ids.length===1)copyText((locate(ids[0])||{b:{text:''}}).b.text);else copyText(rowsText(ids),rowsHTML(ids))}
 
 /* ---------- seleção de várias linhas ---------- */
 var SEL=new Set(),selAnchor=null,selHead=null,BS=null;

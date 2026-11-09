@@ -1,5 +1,9 @@
 # Checklist — PATCH NOTES
 
+## v0.14f — 2026-11-09
+- **Copiar várias linhas** (Ctrl+C ou clique na pega ⠿ com linhas selecionadas) passa a copiar também em formato de lista com marcadores encaixados. Ao colar no Word, Google Docs, email, etc., fica com os marcadores e os níveis das subtarefas; os títulos ficam como títulos e as concluídas riscadas. Em texto simples continua com 2 espaços por nível.
+- **Colar no Tasks mantém os níveis**: texto com recuo (espaços ou tabs, por exemplo copiado do próprio Tasks ou de listas) cria as subtarefas nos níveis certos. Também reconhece os marcadores · ◦ ▪.
+
 ## v0.14e — 2026-11-09
 - **↓ a escrever**: na última linha do texto, a seta para baixo passa logo para o início da linha seguinte, sem ter de ir primeiro ao fim do texto. Em textos com várias linhas, desce dentro do texto até à última linha.
 - **Manter Alt premido** (também a escrever) mostra a barra lateral, se estiver escondida, enquanto o Alt estiver premido, com os números das páginas. Ao largar, volta a esconder-se.
