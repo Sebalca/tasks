@@ -1,5 +1,8 @@
 # Checklist — PATCH NOTES
 
+## v0.14b — 2026-11-09
+- **F2** com uma linha selecionada (por exemplo, depois de Esc) passa a escrever nessa linha, com o cursor no fim. O Enter continua a fazer o mesmo.
+
 ## v0.14a — 2026-11-09
 - **Destacar…** no menu ⋮ de cada linha (tarefa, título ou subtítulo): pinta a caixa do texto com contorno da cor escolhida e fundo da mesma cor transparente (20 cores, ou “Sem cor” para tirar). Funciona com várias linhas selecionadas e no botão “Pintar todas” das tarefas em curso.
 

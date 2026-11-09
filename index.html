@@ -581,6 +581,7 @@ body.alt-nums .pnum{display:inline-block}
     <tr><td><kbd>Esc</kbd></td><td>Entrar no modo <b>linhas</b>: seleciona a primeira linha visível; <kbd>↑</kbd>/<kbd>↓</kbd> movem a seleção, <kbd>Enter</kbd> edita, <kbd>Esc</kbd> sai</td></tr>
     <tr><td><kbd>Ctrl</kbd>+<kbd>←</kbd></td><td>Modo <b>páginas</b> (barra lateral): <kbd>↑</kbd>/<kbd>↓</kbd> percorrem páginas, pastas e secções, <kbd>Enter</kbd> abre, <kbd>←</kbd>/<kbd>→</kbd> fecham/abrem pastas</td></tr>
     <tr><td><kbd>Ctrl</kbd>+<kbd>→</kbd></td><td>Voltar ao modo linhas</td></tr>
+    <tr><td><kbd>F2</kbd> (ou <kbd>Enter</kbd>) com uma linha selecionada</td><td>Passa a escrever nessa linha, com o cursor no fim</td></tr>
     <tr><td>Manter <kbd>Alt</kbd> premido</td><td>Mostra o número de cada página (para usar com <kbd>Alt</kbd>+<kbd>1</kbd>…<kbd>9</kbd>)</td></tr>
     <tr><td><kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>D</kbd></td><td>Mostrar/esconder a data da última edição das tarefas (o ícone de filtro no topo filtra por essa data)</td></tr>
     <tr><td><kbd>Ctrl</kbd>+<kbd>K</kbd></td><td>Pesquisar em tudo: páginas, secções, tarefas (também concluídas) e comentários (também a 🔍 ao lado de “Páginas”)</td></tr>
@@ -705,7 +706,7 @@ body.alt-nums .pnum{display:inline-block}
 (()=>{
 'use strict';
 /* =========================================================
-   Checklist v0.14a — dados em localStorage.
+   Checklist v0.14b — dados em localStorage.
    Estrutura pronta para Supabase (user_site_data:
    site_id 'checklist', chave 'data', valor = objeto S).
    ========================================================= */
@@ -1456,7 +1457,7 @@ document.addEventListener('keydown',e=>{
   else{ids.forEach(id=>toggle(id));SEL.clear();renderAll();toast(`${ids.length} concluída${ids.length===1?'':'s'}`)}return}
  if(e.key==='ArrowUp'||e.key==='ArrowDown'){e.preventDefault();const h=visible.indexOf(selHead||selAnchor);const n=visible[Math.max(0,Math.min(visible.length-1,h+(e.key==='ArrowUp'?-1:1)))];
   if(e.shiftKey)selectRange(selAnchor,n);else{SEL=new Set([n]);selAnchor=selHead=n;applySel()}return}
- if(e.key==='Enter'){e.preventDefault();const id=selHead||selAnchor;clearSel();if(txtOf(id))focusB(id);else{SEL=new Set([id]);selAnchor=selHead=id;applySel()}return}
+ if(e.key==='Enter'||(e.key==='F2'&&!mod)){e.preventDefault();const id=selHead||selAnchor;clearSel();if(txtOf(id))focusB(id);else{SEL=new Set([id]);selAnchor=selHead=id;applySel()}return}
 });
 
 /* ---------- navegação: Alt+n, Alt+setas, modos linhas/páginas ---------- */
@@ -2617,7 +2618,7 @@ const SK=[
  {id:'stabs',k:'Tab / Shift+Tab',l:'Mudar o recuo',c:{sel:5}},
  {id:'copy',k:'Ctrl+C',l:'Copiar as linhas',c:{sel:6}},
  {id:'del',k:'Delete',l:'Apagar as linhas',c:{sel:5}},
- {id:'edit2',k:'Enter',l:'Editar a linha',c:{sel:4}},
+ {id:'edit2',k:'F2',l:'Escrever na linha',c:{sel:4}},
  {id:'esc2',k:'Esc',l:'Limpar a seleção',c:{sel:3}},
  {id:'search',k:'Ctrl+K',l:'Pesquisar em tudo',c:{idle:9,nav:4}},
  {id:'edd',k:'Ctrl+Alt+D',l:'Datas de edição',c:{idle:3}},
@@ -2658,7 +2659,7 @@ function sugHit(e){ // regista o atalho usado (antes dos outros handlers)
  if(ctx==='nav'){if(k==='ArrowUp'||k==='ArrowDown')id='navud';else if(k==='Enter')id='navent';else if(mod&&k==='ArrowRight')id='navback';else if(k==='ArrowLeft'||k==='ArrowRight')id='navlr'}
  if(!id){
   if(mod&&k==='Enter')id=e.shiftKey?(ctx==='sel'?'swork':'work'):(ctx==='sel'?'sdone':'done');
-  else if(k==='Enter'&&!mod&&!e.shiftKey&&!e.altKey)id=ctx==='sel'?'edit2':(ctx==='edit'||ctx==='head'||ctx==='empty')?'enter':null;
+  else if((k==='Enter'||k==='F2')&&!mod&&!e.shiftKey&&!e.altKey)id=ctx==='sel'?'edit2':(ctx==='edit'||ctx==='head'||ctx==='empty')?'enter':null;
   else if(k==='Tab')id=ctx==='sel'?'stabs':e.shiftKey?'stab':'tab';
   else if((mod||e.altKey)&&e.shiftKey&&(k==='ArrowUp'||k==='ArrowDown'))id='move';
   else if(k==='Escape')id=ctx==='sel'?'esc2':ctx==='idle'?'lines':'esc';
