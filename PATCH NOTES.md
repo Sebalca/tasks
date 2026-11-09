@@ -1,5 +1,8 @@
 # Checklist — PATCH NOTES
 
+## v0.14a — 2026-11-09
+- **Destacar…** no menu ⋮ de cada linha (tarefa, título ou subtítulo): pinta a caixa do texto com contorno da cor escolhida e fundo da mesma cor transparente (20 cores, ou “Sem cor” para tirar). Funciona com várias linhas selecionadas e no botão “Pintar todas” das tarefas em curso.
+
 ## v0.14 — 2026-11-05
 - **Manter Alt premido** (cerca de meio segundo) mostra o número de cada página na barra lateral, o mesmo usado em Alt+1…9.
 - **Data da última edição** (Definições → Geral, ou Ctrl+Alt+D): mostra à esquerda de cada tarefa, fora da folha e com um tracejado até à caixa, a data em que o texto ou o tipo da linha foi alterado pela última vez. Formatação, cores, concluir e mover não contam. As tarefas antigas mostram a data de criação. Em ecrãs estreitos a data aparece à direita da tarefa. A hora exata aparece ao passar o rato. Fica guardado em cada dispositivo.
