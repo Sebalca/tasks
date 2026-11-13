@@ -1,5 +1,11 @@
 # Checklist — PATCH NOTES
 
+## v0.14g — 2026-11-13
+- **Pesquisa passa para Ctrl+F** (em vez de Ctrl+K).
+- **Resultados mais parecidos primeiro**: palavras exatas ou que começam pelo que escreveste e estão mais completas aparecem antes. Por exemplo, “equip” mostra “Equipa” antes de “equipamentos”, e estas antes de palavras que só contêm o texto no meio (“reequipar”).
+- Carregar dentro da janela de pesquisa e largar fora já não a fecha. Só fecha com um clique completo fora dela.
+- A pesquisa é limpa cerca de 8 segundos depois de a janela fechar. Se a abrires antes disso, continua lá.
+
 ## v0.14f — 2026-11-09
 - **Copiar várias linhas** (Ctrl+C ou clique na pega ⠿ com linhas selecionadas) passa a copiar também em formato de lista com marcadores encaixados. Ao colar no Word, Google Docs, email, etc., fica com os marcadores e os níveis das subtarefas; os títulos ficam como títulos e as concluídas riscadas. Em texto simples continua com 2 espaços por nível.
 - **Colar no Tasks mantém os níveis**: texto com recuo (espaços ou tabs, por exemplo copiado do próprio Tasks ou de listas) cria as subtarefas nos níveis certos. Também reconhece os marcadores · ◦ ▪.
