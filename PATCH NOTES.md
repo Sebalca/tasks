@@ -1,5 +1,14 @@
 # Checklist — PATCH NOTES
 
+## v0.15 — 2026-11-14
+- **Ferramentas** (ícone da chave no topo): abre janelas flutuantes que se arrastam pelo título, ficam por cima das tarefas e lembram a posição em cada dispositivo. ✕ ou Esc fecha.
+  - **🧮 Calculadora**: %, CE, C, ⌫, 1/x, x², √, ±, vírgula decimal, linha com a conta e botão para copiar o resultado. Funciona com o teclado quando a janela está ativa: números, + − * /, vírgula ou ponto, Enter, Backspace, Delete (CE) e Ctrl+C.
+  - **🔑 Gerador de passwords**: escolhes o número de caracteres (4 a 128) e os tipos (maiúsculas, minúsculas, números, símbolos). Gera duas passwords aleatórias (crypto) e junta a primeira metade da 1.ª com a segunda metade da 2.ª; com número ímpar, a primeira metade leva mais um caractere. Botões copiar e “Gerar outra”. Exclui caracteres que se confundem (0/O, 1/l/I).
+- **Esconder o texto de uma tarefa** (⋮ → 🙈 Esconder o texto; também com várias linhas selecionadas):
+  - O texto aparece como ••••••••••, com 👁 para ver (volta a esconder ao clicar outra vez, ou 20 s depois de saíres da linha) e 📋 para copiar o texto real.
+  - Fica escondido na pesquisa, nas cópias de várias linhas, em “Copiar todas”, nas tarefas em curso, nos comentários e nas notificações de lembretes.
+  - Esconde apenas no ecrã: o texto continua guardado normalmente, sem cifra, na conta e nas partilhas.
+
 ## v0.14g — 2026-11-13
 - **Pesquisa passa para Ctrl+F** (em vez de Ctrl+K).
 - **Resultados mais parecidos primeiro**: palavras exatas ou que começam pelo que escreveste e estão mais completas aparecem antes. Por exemplo, “equip” mostra “Equipa” antes de “equipamentos”, e estas antes de palavras que só contêm o texto no meio (“reequipar”).
